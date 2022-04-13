@@ -128,27 +128,6 @@
 
   
   <url>
-    <loc>https://blackdzs.github.io/tags/%E6%95%B0%E5%AD%A6/</loc>
-    <lastmod>2022-04-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blackdzs.github.io/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/</loc>
-    <lastmod>2022-04-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blackdzs.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</loc>
-    <lastmod>2022-04-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://blackdzs.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/</loc>
     <lastmod>2022-04-13</lastmod>
     <changefreq>weekly</changefreq>
@@ -164,6 +143,27 @@
   
   <url>
     <loc>https://blackdzs.github.io/tags/%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/</loc>
+    <lastmod>2022-04-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blackdzs.github.io/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/</loc>
+    <lastmod>2022-04-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blackdzs.github.io/tags/%E6%95%B0%E5%AD%A6/</loc>
+    <lastmod>2022-04-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blackdzs.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</loc>
     <lastmod>2022-04-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
