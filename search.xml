@@ -4,6 +4,60 @@
   
     
     <entry>
+      <title>autogluon调研</title>
+      <link href="/2022/04/14/%E7%AE%97%E6%B3%95/%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6/autogluon%E8%B0%83%E7%A0%94/"/>
+      <url>/2022/04/14/%E7%AE%97%E6%B3%95/%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6/autogluon%E8%B0%83%E7%A0%94/</url>
+      
+        <content type="html"><![CDATA[<h2 id="AutoGluon-介绍">AutoGluon 介绍</h2><h3 id="端到端自动拟合数据">端到端自动拟合数据</h3><p>输入（表格）<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>⇒</mo></mrow><annotation encoding="application/x-tex">\Rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">⇒</span></span></span></span> 集成学习（bagging， boosting）<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>⇒</mo></mrow><annotation encoding="application/x-tex">\Rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">⇒</span></span></span></span> 模型对比（leaderboad）</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> autogluon.tabular <span class="keyword">import</span> TabularDataset, TabularPredictor</span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练数据集</span></span><br><span class="line">train_data = TabularDataset(<span class="string">&#x27;https://autogluon.s3.amazonaws.com/datasets/Inc/train.csv&#x27;</span>)</span><br><span class="line">subsample_size = <span class="number">500</span> <span class="comment"># 使用数据集大小</span></span><br><span class="line">train_data = train_data.sample(n=subsample_size, random_state=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 预测目标</span></span><br><span class="line">label = <span class="string">&#x27;class&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 模型训练</span></span><br><span class="line">save_path = <span class="string">&#x27;agModels-predictClass&#x27;</span></span><br><span class="line">predictor = TabularPredictor(label=label, path=save_path).fit(train_data)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试数据</span></span><br><span class="line">test_data = TabularDataset(<span class="string">&#x27;https://autogluon.s3.amazonaws.com/datasets/Inc/test.csv&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试集评估</span></span><br><span class="line">predictor.leaderboard(test_data, silent=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure><img src="fig1.png" alt="测试集leaderboard" width="90%"/><!-- <p align="center">测试集leaderboard</p> --><ul><li>自动生成十几种常见机器学习方法的对比结果，生成leaderboard</li><li>可以指定或者自定义优化目标，如想要高的准确率，还是召回率或者AOC</li><li>可以设置拟合时间，便于业务目标最优化的实现</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 算法框架 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 算法框架 </tag>
+            
+            <tag> autogluon </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>独立随机变量和的分布和顺序统计量</title>
+      <link href="/2022/04/14/%E6%95%B0%E5%AD%A6/%E6%A6%82%E7%8E%87%E8%AE%BA/%E7%8B%AC%E7%AB%8B%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F%E5%92%8C%E7%9A%84%E5%88%86%E5%B8%83%E5%92%8C%E9%A1%BA%E5%BA%8F%E7%BB%9F%E8%AE%A1%E9%87%8F/"/>
+      <url>/2022/04/14/%E6%95%B0%E5%AD%A6/%E6%A6%82%E7%8E%87%E8%AE%BA/%E7%8B%AC%E7%AB%8B%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F%E5%92%8C%E7%9A%84%E5%88%86%E5%B8%83%E5%92%8C%E9%A1%BA%E5%BA%8F%E7%BB%9F%E8%AE%A1%E9%87%8F/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> 数学 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 概率论 </tag>
+            
+            <tag> 数学 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>协方差与相关系数</title>
       <link href="/2022/04/13/%E6%95%B0%E5%AD%A6/%E6%A6%82%E7%8E%87%E8%AE%BA/%E5%8D%8F%E6%96%B9%E5%B7%AE%E4%B8%8E%E7%9B%B8%E5%85%B3%E7%B3%BB%E6%95%B0/"/>
       <url>/2022/04/13/%E6%95%B0%E5%AD%A6/%E6%A6%82%E7%8E%87%E8%AE%BA/%E5%8D%8F%E6%96%B9%E5%B7%AE%E4%B8%8E%E7%9B%B8%E5%85%B3%E7%B3%BB%E6%95%B0/</url>
