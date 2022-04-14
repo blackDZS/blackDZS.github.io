@@ -206,6 +206,20 @@
   </url>
   
   <url>
+    <loc>https://blackdzs.github.io/tags/%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6/</loc>
+    <lastmod>2022-04-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blackdzs.github.io/tags/autogluon/</loc>
+    <lastmod>2022-04-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://blackdzs.github.io/tags/Transformer/</loc>
     <lastmod>2022-04-14</lastmod>
     <changefreq>weekly</changefreq>
@@ -221,20 +235,6 @@
   
   <url>
     <loc>https://blackdzs.github.io/tags/%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0/</loc>
-    <lastmod>2022-04-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blackdzs.github.io/tags/%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6/</loc>
-    <lastmod>2022-04-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blackdzs.github.io/tags/autogluon/</loc>
     <lastmod>2022-04-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
