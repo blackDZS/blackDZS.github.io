@@ -14,14 +14,14 @@
     <lastBuildDate>Wed, 25 Sep 2024 13:39:31 +0800</lastBuildDate>
     <atom:link href="https://blackdzs.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>博客介绍</title>
+      <title>介绍</title>
       <link>https://blackdzs.github.io/posts/about/</link>
       <pubDate>Wed, 25 Sep 2024 13:39:31 +0800</pubDate>
       <guid>https://blackdzs.github.io/posts/about/</guid>
       <description>&lt;h1 id=&#34;1-引言&#34;&gt;1. 引言&lt;/h1&gt;
 &lt;p&gt;大模型（Large Language Model, LLM）作为人工智能领域的重要技术，正逐渐渗透进我们生活的方方面面。无论是手机、电脑，还是我们日常使用的各种应用程序，大模型的普及让这些设备和应用程序变得更加智能和高效。&lt;/p&gt;
 &lt;p&gt;首先，在手机和电脑中，基于大模型的智能助手帮助我们执行各种任务，如语音搜索、行程安排、智能推荐等。我们只需简单的语音指令或对话，就可以让它们理解复杂的需求，提升了操作的便捷性。其次，各类APP也在积极采用大模型技术，实现功能的AI化。例如，我们在使用百度，抖音，小红书进行搜索时会出现AI总结，在我们使用购物软件，如京东时，会出现AI选购助手；在一些办公软件中如Office，WPS，Notion等也集成了AI技术帮助用户进行生成文档，润色文章等等以帮助用户更快速、高效地完。不仅如此，大模型的普及还催生了越来越多新的应用场景。在线客服、虚拟医生、智能客服机器人等，通过大模型的强大语言处理能力，能更好地理解用户需求并提供个性化的解决方案。这种智能化趋势让我们的日常生活和工作变得更加便捷和高效。&lt;/p&gt;
-&lt;p&gt;但是在大模型的使用过程中，大部分用户的感觉开始从惊艳变成鸡肋，导致这种问题的原因是多方面的，从用户的角度来看，很多用户不知道如何使用大模型，即Prompt设计，另外一方面从模型的角度来看，模型本身存在幻觉（Hallucinations），知识过时，专业领域知识不足等问题。&lt;/p&gt;
+&lt;p&gt;但是在大模型的使用过程中，大部分用户的感觉开始从惊艳变成难用，导致这种问题的原因是多方面的，从用户的角度来看，很多用户不知道如何更好的使用大模型，如Prompt Engineering, Few-shot Learning, CoT等等；从模型的角度来看，模型本身存在幻觉（Hallucinations），知识过时，专业领域知识不足等问题。&lt;/p&gt;
 &lt;h1 id=&#34;2-存在的问题&#34;&gt;2. 存在的问题&lt;/h1&gt;
 &lt;p&gt;尽管大模型（LLM）在多个领域展现出了强大的能力和广泛的应用前景，但在实际使用过程中仍然面临诸多挑战和问题。这些问题不仅影响了用户的体验，也制约了大模型技术的进一步发展和普及。主要存在以下几个方面的问题：&lt;/p&gt;
 &lt;h2 id=&#34;21-用户使用难度大&#34;&gt;2.1 用户使用难度大&lt;/h2&gt;

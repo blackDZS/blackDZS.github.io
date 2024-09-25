@@ -73,9 +73,11 @@ params:
     imageHeight: 120
     imageTitle: my image
     buttons:
-      - name: Posts
+      - name: 介绍
+        url: posts/about
+      - name: 文章
         url: posts
-      - name: Tags
+      - name: 标签
         url: tags
 
   # home-info mode
@@ -85,11 +87,11 @@ params:
 
   socialIcons:
     - name: email
-      url: "1980694906@qq.com"
-    - name: stackoverflow
-      url: "https://stackoverflow.com"
+      url: "mailto:1980694906@qq.com"
     - name: github
-      url: "https://github.com/"
+      url: "https://github.com/blackDZS"
+    - name: zhihu
+      url: "https://www.zhihu.com/people/di-zhen-sheng"
 
   analytics:
     google:
