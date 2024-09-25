@@ -2,13 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blackdzs.github.io/about/</loc>
+    <lastmod>2024-09-25T13:39:31+08:00</lastmod>
+  </url><url>
     <loc>https://blackdzs.github.io/</loc>
     <lastmod>2024-09-25T13:39:31+08:00</lastmod>
   </url><url>
-    <loc>https://blackdzs.github.io/posts/</loc>
-    <lastmod>2024-09-25T13:39:31+08:00</lastmod>
-  </url><url>
-    <loc>https://blackdzs.github.io/posts/about/</loc>
+    <loc>https://blackdzs.github.io/about/about/</loc>
     <lastmod>2024-09-25T13:39:31+08:00</lastmod>
   </url><url>
     <loc>https://blackdzs.github.io/archives/</loc>

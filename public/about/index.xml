@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>DIZS&#39; Blog</title>
-    <link>https://blackdzs.github.io/</link>
-    <description>Recent content on DIZS&#39; Blog</description>
+    <title>Abouts on DIZS&#39; Blog</title>
+    <link>https://blackdzs.github.io/about/</link>
+    <description>Recent content in Abouts on DIZS&#39; Blog</description>
     <image>
       <title>DIZS&#39; Blog</title>
       <url>https://blackdzs.github.io/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
@@ -12,7 +12,7 @@
     <generator>Hugo -- 0.134.3</generator>
     <language>en</language>
     <lastBuildDate>Wed, 25 Sep 2024 13:39:31 +0800</lastBuildDate>
-    <atom:link href="https://blackdzs.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://blackdzs.github.io/about/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>介绍</title>
       <link>https://blackdzs.github.io/about/about/</link>
