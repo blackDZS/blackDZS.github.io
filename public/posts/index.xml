@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Posts on DIZS&#39; Blog</title>
+    <link>https://blackdzs.github.io/posts/</link>
+    <description>Recent content in Posts on DIZS&#39; Blog</description>
+    <image>
+      <title>DIZS&#39; Blog</title>
+      <url>https://blackdzs.github.io/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>https://blackdzs.github.io/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+    </image>
+    <generator>Hugo -- 0.134.3</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 25 Sep 2024 13:39:31 +0800</lastBuildDate>
+    <atom:link href="https://blackdzs.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>博客介绍</title>
+      <link>https://blackdzs.github.io/posts/about/</link>
+      <pubDate>Wed, 25 Sep 2024 13:39:31 +0800</pubDate>
+      <guid>https://blackdzs.github.io/posts/about/</guid>
+      <description>&lt;h1 id=&#34;1-引言&#34;&gt;1. 引言&lt;/h1&gt;
+&lt;p&gt;大模型（Large Language Model, LLM）作为人工智能领域的重要技术，正逐渐渗透进我们生活的方方面面。无论是手机、电脑，还是我们日常使用的各种应用程序，大模型的普及让这些设备和应用程序变得更加智能和高效。&lt;/p&gt;
+&lt;p&gt;首先，在手机和电脑中，基于大模型的智能助手帮助我们执行各种任务，如语音搜索、行程安排、智能推荐等。我们只需简单的语音指令或对话，就可以让它们理解复杂的需求，提升了操作的便捷性。其次，各类APP也在积极采用大模型技术，实现功能的AI化。例如，我们在使用百度，抖音，小红书进行搜索时会出现AI总结，在我们使用购物软件，如京东时，会出现AI选购助手；在一些办公软件中如Office，WPS，Notion等也集成了AI技术帮助用户进行生成文档，润色文章等等以帮助用户更快速、高效地完。不仅如此，大模型的普及还催生了越来越多新的应用场景。在线客服、虚拟医生、智能客服机器人等，通过大模型的强大语言处理能力，能更好地理解用户需求并提供个性化的解决方案。这种智能化趋势让我们的日常生活和工作变得更加便捷和高效。&lt;/p&gt;
+&lt;p&gt;但是在大模型的使用过程中，大部分用户的感觉开始从惊艳变成鸡肋，导致这种问题的原因是多方面的，从用户的角度来看，很多用户不知道如何使用大模型，即Prompt设计，另外一方面从模型的角度来看，模型本身存在幻觉（Hallucinations），知识过时，专业领域知识不足等问题。&lt;/p&gt;
+&lt;h1 id=&#34;2-存在的问题&#34;&gt;2. 存在的问题&lt;/h1&gt;
+&lt;p&gt;尽管大模型（LLM）在多个领域展现出了强大的能力和广泛的应用前景，但在实际使用过程中仍然面临诸多挑战和问题。这些问题不仅影响了用户的体验，也制约了大模型技术的进一步发展和普及。主要存在以下几个方面的问题：&lt;/p&gt;
+&lt;h2 id=&#34;21-用户使用难度大&#34;&gt;2.1 用户使用难度大&lt;/h2&gt;
+&lt;h3 id=&#34;211-prompt设计复杂&#34;&gt;2.1.1 Prompt设计复杂&lt;/h3&gt;
+&lt;p&gt;许多用户缺乏有效设计提示（Prompt）的能力，导致大模型无法准确理解用户需求，从而生成不符合预期的结果。复杂的Prompt设计不仅让普通用户难以充分利用大模型的潜力，也使得用户对模型的期望与实际效果之间存在差距，从而降低了使用积极性。&lt;/p&gt;
+&lt;h2 id=&#34;22-模型本身的局限性&#34;&gt;2.2 模型本身的局限性&lt;/h2&gt;
+&lt;h3 id=&#34;221-幻觉hallucinations&#34;&gt;2.2.1 幻觉（Hallucinations）&lt;/h3&gt;
+&lt;p&gt;大模型在生成文本时，可能会出现幻觉，即生成与事实不符或完全虚构的信息。这种现象在需要高准确性和可靠性的应用场景中，尤其是医疗、法律等领域，具有潜在的风险和危害。&lt;/p&gt;
+&lt;h3 id=&#34;222-知识滞后&#34;&gt;2.2.2 知识滞后&lt;/h3&gt;
+&lt;p&gt;大模型的知识基于其训练数据，而训练数据具有时间上的滞后性。因此，模型可能无法及时反映最新的知识和信息，导致在涉及最新事件或动态变化的领域时，生成的内容可能不准确或不完整。&lt;/p&gt;
+&lt;h3 id=&#34;223-专业领域知识不足&#34;&gt;2.2.3 专业领域知识不足&lt;/h3&gt;
+&lt;p&gt;尽管大模型在通用知识方面表现出色，但在特定专业领域，如医学、法律、金融等，模型的知识深度和专业性仍显不足。这限制了其在专业应用中的效果，无法完全替代专业人士的判断和建议。&lt;/p&gt;
+&lt;h1 id=&#34;3-解决方法&#34;&gt;3. 解决方法&lt;/h1&gt;
+&lt;p&gt;目前，大模型（LLM）在处理幻觉、知识滞后、专业领域知识不足等问题时，有多种技术路径在探索和实施。以下是几种主要的解决方案及它们的区别、关系和各自解决的问题：&lt;/p&gt;
+&lt;h3 id=&#34;31-rag-retrieval-augmented-generation&#34;&gt;3.1 &lt;strong&gt;RAG (Retrieval-Augmented Generation)&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;RAG&lt;/strong&gt; 是一种将 &lt;strong&gt;检索系统&lt;/strong&gt; 与大模型生成相结合的方法。具体来说，它通过检索外部数据库或知识库中的相关信息，将这些信息作为上下文输入大模型，从而使大模型能够在生成文本时参考更多的权威和实时数据。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;解决的问题&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;知识滞后&lt;/strong&gt;：大模型训练后知识会过时，而 RAG 可以实时检索最新的信息，填补模型的知识空白。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;专业知识不足&lt;/strong&gt;：通过对接特定领域的知识库，RAG 可以使模型在特定领域生成更加精确、权威的回答。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;局限性&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;RAG的检索能力依赖于外部数据源的质量和实时更新，若知识库滞后或不准确，可能导致错误的信息生成。&lt;/li&gt;
+&lt;li&gt;检索-生成的过程可能增加系统的复杂性和响应时间，影响用户体验。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;32-智能体autonomous-agents&#34;&gt;3.2 &lt;strong&gt;智能体（Autonomous Agents）&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;智能体是指具备一定自主决策和执行能力的AI系统，通常由一个大语言模型驱动，并辅以工具集，如 API、外部知识库、数据库等，用于自动完成复杂任务。这些智能体能够根据任务目标进行多步推理、决策和操作。智能体可以结合 &lt;strong&gt;RAG&lt;/strong&gt; 进行检索以获取外部数据，或者利用 &lt;strong&gt;Chain-of-Thought（CoT）&lt;/strong&gt; 技术进行多步推理。它们的集成可以实现更强大的任务执行能力。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;解决的问题&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;多步骤任务执行&lt;/strong&gt;：通过模拟人类的思维过程，智能体可以完成多步骤的任务，包括规划、决策、执行等，适用于解决复杂的问题。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;任务自动化&lt;/strong&gt;：智能体不仅能生成语言，还能结合外部工具（如 API、数据库），在真实世界中执行操作，如预约、查询信息等。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;局限性&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;智能体的实际能力仍然取决于模型的基础性能以及外部系统的集成，可能无法处理所有复杂或模糊的任务。&lt;/li&gt;
+&lt;li&gt;实现智能体的跨领域应用需要大量的训练和优化，开发成本较高。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;33-cot-chain-of-thought&#34;&gt;3.3 &lt;strong&gt;CoT (Chain-of-Thought)&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Chain-of-Thought（CoT）&lt;/strong&gt; 是一种推理方法，通过将复杂问题拆解为多步推理过程，使大模型能够逐步生成解决方案。这种方法尤其适用于解决逻辑推理、数学计算、复杂决策等任务。CoT可以与其他技术（如智能体）结合，帮助在多步骤任务执行中实现更准确的推理过程。它可以被嵌入到 &lt;strong&gt;RAG&lt;/strong&gt; 或 &lt;strong&gt;智能体&lt;/strong&gt; 的任务流中，使其决策和生成更加合理。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
