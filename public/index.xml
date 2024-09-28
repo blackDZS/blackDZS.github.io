@@ -11,8 +11,22 @@
     </image>
     <generator>Hugo -- 0.134.3</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 25 Sep 2024 13:39:31 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 25 Sep 2024 19:47:59 +0800</lastBuildDate>
     <atom:link href="https://blackdzs.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【RAG应用开发】1.从零构建RAG应用</title>
+      <link>https://blackdzs.github.io/posts/%E4%BB%8E%E9%9B%B6%E6%9E%84%E5%BB%BArag%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Wed, 25 Sep 2024 19:47:59 +0800</pubDate>
+      <guid>https://blackdzs.github.io/posts/%E4%BB%8E%E9%9B%B6%E6%9E%84%E5%BB%BArag%E5%BA%94%E7%94%A8/</guid>
+      <description>基于Langchain从零构建一个RAG应用</description>
+    </item>
+    <item>
+      <title>关于我</title>
+      <link>https://blackdzs.github.io/about/about-me/</link>
+      <pubDate>Wed, 25 Sep 2024 19:25:13 +0800</pubDate>
+      <guid>https://blackdzs.github.io/about/about-me/</guid>
+      <description>&lt;p&gt;我是一名算法工程师，我感兴趣的领域是机器学习，深度学习和大模型。目前主要做大模型相关的工作，包括&lt;strong&gt;多模态数据处理&lt;/strong&gt;，&lt;strong&gt;训练数据/知识库构建&lt;/strong&gt;，&lt;strong&gt;模型微调&lt;/strong&gt;，&lt;strong&gt;RAG &amp;amp; Agent开发&lt;/strong&gt;。如果你对我的内容感兴趣，欢迎关注我的公众号《AI 应用开发》&lt;/p&gt;</description>
+    </item>
     <item>
       <title>介绍</title>
       <link>https://blackdzs.github.io/about/about/</link>
