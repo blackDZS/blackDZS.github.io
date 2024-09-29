@@ -14,17 +14,17 @@
     <lastBuildDate>Sun, 29 Sep 2024 17:17:35 +0800</lastBuildDate>
     <atom:link href="https://blackdzs.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>【RAG应用开发】2.RAG应用性能评估</title>
-      <link>https://blackdzs.github.io/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%912.rag%E5%BA%94%E7%94%A8%E6%80%A7%E8%83%BD%E8%AF%84%E4%BC%B0/</link>
+      <title>RAG应用开发指南（二）：如何评估与优化RAG应用性能</title>
+      <link>https://blackdzs.github.io/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97%E4%BA%8C%E5%A6%82%E4%BD%95%E8%AF%84%E4%BC%B0%E4%B8%8E%E4%BC%98%E5%8C%96rag%E5%BA%94%E7%94%A8%E6%80%A7%E8%83%BD/</link>
       <pubDate>Sun, 29 Sep 2024 17:17:35 +0800</pubDate>
-      <guid>https://blackdzs.github.io/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%912.rag%E5%BA%94%E7%94%A8%E6%80%A7%E8%83%BD%E8%AF%84%E4%BC%B0/</guid>
+      <guid>https://blackdzs.github.io/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97%E4%BA%8C%E5%A6%82%E4%BD%95%E8%AF%84%E4%BC%B0%E4%B8%8E%E4%BC%98%E5%8C%96rag%E5%BA%94%E7%94%A8%E6%80%A7%E8%83%BD/</guid>
       <description>RAG 应用评估</description>
     </item>
     <item>
-      <title>【RAG应用开发】1.RAG原理与实现</title>
-      <link>https://blackdzs.github.io/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%911.rag%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/</link>
+      <title>RAG应用开发指南（一）：深入解析RAG原理与实现</title>
+      <link>https://blackdzs.github.io/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97%E4%B8%80%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90rag%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/</link>
       <pubDate>Wed, 25 Sep 2024 19:47:59 +0800</pubDate>
-      <guid>https://blackdzs.github.io/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%911.rag%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/</guid>
+      <guid>https://blackdzs.github.io/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97%E4%B8%80%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90rag%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/</guid>
       <description>基于Langchain从零构建一个RAG应用</description>
     </item>
   </channel>

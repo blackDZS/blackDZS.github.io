@@ -1,5 +1,5 @@
 ---
-title: "【RAG应用开发】2.RAG应用性能评估"
+title: "RAG应用开发指南（二）：如何评估与优化RAG应用性能"
 date: 2024-09-29T17:17:35+08:00
 # weight: 1
 # aliases: ["/first"]
