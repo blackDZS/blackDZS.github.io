@@ -14,10 +14,10 @@
     <lastBuildDate>Wed, 25 Sep 2024 19:47:59 +0800</lastBuildDate>
     <atom:link href="https://blackdzs.github.io/tags/langchain/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>【RAG应用开发】RAG原理与实现</title>
-      <link>https://blackdzs.github.io/posts/%E4%BB%8E%E9%9B%B6%E6%9E%84%E5%BB%BArag%E5%BA%94%E7%94%A8/</link>
+      <title>【RAG应用开发】1.RAG原理与实现</title>
+      <link>https://blackdzs.github.io/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%911.rag%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/</link>
       <pubDate>Wed, 25 Sep 2024 19:47:59 +0800</pubDate>
-      <guid>https://blackdzs.github.io/posts/%E4%BB%8E%E9%9B%B6%E6%9E%84%E5%BB%BArag%E5%BA%94%E7%94%A8/</guid>
+      <guid>https://blackdzs.github.io/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%911.rag%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/</guid>
       <description>基于Langchain从零构建一个RAG应用</description>
     </item>
   </channel>

@@ -1,5 +1,5 @@
 ---
-title: "【RAG应用开发】RAG原理与实现"
+title: "【RAG应用开发】1.RAG原理与实现"
 date: 2024-09-25T19:47:59+08:00
 # weight: 1
 # aliases: ["/first"]
