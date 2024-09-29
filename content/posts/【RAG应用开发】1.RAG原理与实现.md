@@ -190,6 +190,9 @@ for chunk in rag_chain.stream("什么是RAG"):
 
 {{< figure src="/images/RAG 检索过程.png" width="100%" align="center" title="RAG 检索增强生成过程" >}}
 
+在本篇文章中我们介绍了RAG的工作原理与基于`Langchain`实现简单的RAG应用，在下一篇文章中我们讨论[如何评估RAG应用](/posts/【RAG应用开发】2.RAG应用性能评估.md, "RAG应用性能评估")
+
+
 
 ## 参考
 1. Lewis, Patrick, et al. ["Retrieval-augmented generation for knowledge-intensive nlp tasks."](https://arxiv.org/pdf/2005.11401) Advances in Neural Information Processing Systems 33 (2020): 9459-9474.

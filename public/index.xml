@@ -11,8 +11,15 @@
     </image>
     <generator>Hugo -- 0.134.3</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 25 Sep 2024 19:47:59 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 29 Sep 2024 17:17:35 +0800</lastBuildDate>
     <atom:link href="https://blackdzs.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【RAG应用开发】2.RAG应用性能评估</title>
+      <link>https://blackdzs.github.io/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%912.rag%E5%BA%94%E7%94%A8%E6%80%A7%E8%83%BD%E8%AF%84%E4%BC%B0/</link>
+      <pubDate>Sun, 29 Sep 2024 17:17:35 +0800</pubDate>
+      <guid>https://blackdzs.github.io/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%912.rag%E5%BA%94%E7%94%A8%E6%80%A7%E8%83%BD%E8%AF%84%E4%BC%B0/</guid>
+      <description>RAG 应用评估</description>
+    </item>
     <item>
       <title>【RAG应用开发】1.RAG原理与实现</title>
       <link>https://blackdzs.github.io/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%911.rag%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/</link>

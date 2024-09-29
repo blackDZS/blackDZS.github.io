@@ -11,6 +11,14 @@
     </image>
     <generator>Hugo -- 0.134.3</generator>
     <language>en</language>
+    <lastBuildDate>Tue, 15 Sep 2020 11:30:03 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/first/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>My 1st post</title>
+      <link>http://localhost:1313/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%912.rag%E5%BA%94%E7%94%A8%E6%80%A7%E8%83%BD%E8%AF%84%E4%BC%B0/</link>
+      <pubDate>Tue, 15 Sep 2020 11:30:03 +0000</pubDate>
+      <guid>http://localhost:1313/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%912.rag%E5%BA%94%E7%94%A8%E6%80%A7%E8%83%BD%E8%AF%84%E4%BC%B0/</guid>
+      <description>Desc Text.</description>
+    </item>
   </channel>
 </rss>
