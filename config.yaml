@@ -42,6 +42,9 @@ params:
   ShowCodeCopyButtons: false
   ShowWordCount: true
   ShowRssButtonInSectionTermList: true
+  ShowAllPagesInArchive: true
+  ShowPageNums: true
+  ShowToc: true
   UseHugoToc: true
   disableSpecial1stPost: false
   disableScrollToTop: false
