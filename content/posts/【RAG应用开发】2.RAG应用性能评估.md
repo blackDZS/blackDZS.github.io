@@ -3,6 +3,7 @@ title: "【RAG应用开发】2.RAG应用性能评估"
 date: 2024-09-29T17:17:35+08:00
 # weight: 1
 # aliases: ["/first"]
+Categories: ["RAG应用开发"]
 tags: ["langchain", "RAG应用开发"]
 author: "DIZS"
 # author: ["Me", "You"] # multiple authors

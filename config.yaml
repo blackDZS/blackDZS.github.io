@@ -5,10 +5,15 @@ pagination:
   pagerSize: 5
 theme: PaperMod
 
+enableInlineShortcodes: true
 enableRobotsTXT: true
 buildDrafts: false
 buildFuture: false
 buildExpired: false
+enableEmoji: true
+pygmentsUseClasses: true
+mainsections: ["posts", "papermod"]
+
 
 minify:
   disableXML: true
@@ -77,8 +82,6 @@ params:
     imageHeight: 120
     imageTitle: my image
     buttons:
-      - name: 介绍
-        url: posts/about
       - name: 文章
         url: posts
       - name: 标签
@@ -131,23 +134,23 @@ menu:
   main:
     - identifier: categories
       name: 分类
-      url: /categories/
+      url: categories/
       weight: 10
     - identifier: tags
       name: 标签
-      url: /tags/
+      url: tags/
       weight: 20
     - identifier: archive
       name: 归档
-      url: /archive
+      url: archives
       weight: 30
     - identifier: about
       name: 关于我
-      url: /about/about-me
+      url: about/about-me
       weight: 40
     - identifier: search
       name: 搜索
-      url: /search/
+      url: search/
       weight: 50
 # Read: https://github.com/adityatelange/hugo-PaperMod/wiki/FAQs#using-hugos-syntax-highlighter-chroma
 pygmentsUseClasses: true
