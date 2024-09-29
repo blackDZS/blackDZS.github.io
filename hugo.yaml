@@ -141,10 +141,14 @@ menu:
       name: 归档
       url: /archive
       weight: 30
+    - identifier: about
+      name: 关于我
+      url: /about/about-me
+      weight: 40
     - identifier: search
       name: 搜索
       url: /search/
-      weight: 40
+      weight: 50
 # Read: https://github.com/adityatelange/hugo-PaperMod/wiki/FAQs#using-hugos-syntax-highlighter-chroma
 pygmentsUseClasses: true
 
