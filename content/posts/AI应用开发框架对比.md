@@ -11,7 +11,7 @@ TocOpen: false
 draft: false
 hidemeta: false
 comments: false
-description: "对比当下比较火的AI开发框架"
+description: "深入对比当前主流的AI应用开发框架，包括Langchain、LlamaIndex、Haystack和Dify、Flowise、Langflow等，帮助你快速选择合适的工具进行AI应用开发。"
 canonicalURL: "https://canonical.url/to/page"
 disableHLJS: true # to disable highlightjs
 disableShare: false
