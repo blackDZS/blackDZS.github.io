@@ -11,8 +11,15 @@
     </image>
     <generator>Hugo -- 0.134.3</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 29 Sep 2024 17:17:35 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 30 Sep 2024 10:25:23 +0800</lastBuildDate>
     <atom:link href="https://blackdzs.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>AI应用开发框架对比</title>
+      <link>https://blackdzs.github.io/posts/ai%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6%E5%AF%B9%E6%AF%94/</link>
+      <pubDate>Mon, 30 Sep 2024 10:25:23 +0800</pubDate>
+      <guid>https://blackdzs.github.io/posts/ai%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6%E5%AF%B9%E6%AF%94/</guid>
+      <description>对比当下比较火的AI开发框架</description>
+    </item>
     <item>
       <title>RAG应用开发指南（二）：如何评估与优化RAG应用性能</title>
       <link>https://blackdzs.github.io/posts/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97%E4%BA%8C%E5%A6%82%E4%BD%95%E8%AF%84%E4%BC%B0%E4%B8%8E%E4%BC%98%E5%8C%96rag%E5%BA%94%E7%94%A8%E6%80%A7%E8%83%BD/</link>

@@ -11,8 +11,22 @@
     </image>
     <generator>Hugo -- 0.134.3</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 29 Sep 2024 17:17:35 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 30 Sep 2024 10:25:23 +0800</lastBuildDate>
     <atom:link href="https://blackdzs.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>AI应用</title>
+      <link>https://blackdzs.github.io/tags/ai%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Mon, 30 Sep 2024 10:25:23 +0800</pubDate>
+      <guid>https://blackdzs.github.io/tags/ai%E5%BA%94%E7%94%A8/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>框架</title>
+      <link>https://blackdzs.github.io/tags/%E6%A1%86%E6%9E%B6/</link>
+      <pubDate>Mon, 30 Sep 2024 10:25:23 +0800</pubDate>
+      <guid>https://blackdzs.github.io/tags/%E6%A1%86%E6%9E%B6/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Langchain</title>
       <link>https://blackdzs.github.io/tags/langchain/</link>
