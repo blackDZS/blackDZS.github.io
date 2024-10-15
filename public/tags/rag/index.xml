@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>RAG on DIZS&#39; Blog</title>
+    <link>https://blackdzs.github.io/tags/rag/</link>
+    <description>Recent content in RAG on DIZS&#39; Blog</description>
+    <image>
+      <title>DIZS&#39; Blog</title>
+      <url>https://blackdzs.github.io/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>https://blackdzs.github.io/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+    </image>
+    <generator>Hugo -- 0.134.3</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 15 Oct 2024 20:40:03 +0800</lastBuildDate>
+    <atom:link href="https://blackdzs.github.io/tags/rag/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>深入解析TF-IDF算法：原理、应用及Python实现详解</title>
+      <link>https://blackdzs.github.io/posts/tf-idf/</link>
+      <pubDate>Tue, 15 Oct 2024 20:40:03 +0800</pubDate>
+      <guid>https://blackdzs.github.io/posts/tf-idf/</guid>
+      <description>深入解析TF-IDF算法：原理、应用及Python实现详解</description>
+    </item>
+  </channel>
+</rss>

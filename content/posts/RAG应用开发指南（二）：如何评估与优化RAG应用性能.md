@@ -62,8 +62,9 @@ editPost:
 
 {{< figure src="/images/RAG Metrics.png" width="100%" align="center" title="图 1. RAG 评估指标" >}}
 
-
-### 2.1 评估目标
+### 2.2 评估过程
+在评估过程中，我们需要对一些标准化的指标进行量化。例如，在计算“上下文精确度”（Context Precision）时，需要评估检索到的上下文对生成答案的有效性。传统的自然语言分析方法在这一指标的评估上存在一定的局限性，但我们可以利用大型语言模型来辅助判断。下图2展示了在RAGAS中关于“上下文精确度”计算过程的Prompt设计。
+{{< figure src="/images/Context Precision.png" width="100%" align="center" title="图 2. RAGAS Context Precision Prompt" >}}
 
 
 ## 引用

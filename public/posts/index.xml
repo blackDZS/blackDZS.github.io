@@ -11,8 +11,15 @@
     </image>
     <generator>Hugo -- 0.134.3</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 30 Sep 2024 10:25:23 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 15 Oct 2024 20:40:03 +0800</lastBuildDate>
     <atom:link href="https://blackdzs.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>深入解析TF-IDF算法：原理、应用及Python实现详解</title>
+      <link>https://blackdzs.github.io/posts/tf-idf/</link>
+      <pubDate>Tue, 15 Oct 2024 20:40:03 +0800</pubDate>
+      <guid>https://blackdzs.github.io/posts/tf-idf/</guid>
+      <description>深入解析TF-IDF算法：原理、应用及Python实现详解</description>
+    </item>
     <item>
       <title>AI应用开发框架对比</title>
       <link>https://blackdzs.github.io/posts/ai%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6%E5%AF%B9%E6%AF%94/</link>
