@@ -1,13 +1,16 @@
 ---
-title: "RAG应用开发指南（一）：深入解析RAG原理与实现"
-description: 
+title: RAG应用开发指南（一）：深入解析RAG原理与实现
+description: 基于Langchain从零构建一个RAG应用
 date: 2024-09-25T19:47:59+08:00
 image: 
+categories: ["RAG应用开发"]
+tags: ["langchain", "RAG应用开发"]
 math: true
 license: 
 hidden: false
 comments: true
 draft: false
+keywords: ["langchain", "RAG应用开发"]
 ---
 
 ## 1、介绍

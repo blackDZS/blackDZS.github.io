@@ -2,7 +2,9 @@
 title: "AI应用开发框架对比"
 description: 
 date: 2024-09-30T10:25:23+08:00
-image: 
+image:
+categories: ["RAG应用开发"]
+tags: ["框架", "AI应用"] 
 math: true
 license: 
 hidden: false

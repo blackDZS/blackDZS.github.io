@@ -10,15 +10,23 @@
 [[social]]
 identifier = "github"
 name = "GitHub"
-url = "https://github.com/CaiJimmy/hugo-theme-stack"
+url = "https://github.com/blackDZS"
 
 [social.params]
 icon = "brand-github"
 
 [[social]]
-identifier = "twitter"
-name = "Twitter"
-url = "https://twitter.com"
+identifier = "email"
+name = "Email"
+url = "mailto:1980694906@qq.com"
 
 [social.params]
-icon = "brand-twitter"
+icon = "brand-email"
+
+[[social]]
+identifier = "zhihu"
+name = "Zhihu"
+url = "https://www.zhihu.com/people/di-zhen-sheng"
+
+[social.params]
+icon = "brand-zhihu"

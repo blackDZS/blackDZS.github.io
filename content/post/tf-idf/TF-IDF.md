@@ -3,6 +3,8 @@ title: "深入解析TF-IDF算法：原理、应用及Python实现详解"
 description: 
 date: 2024-10-15T20:40:03+08:00
 image: 
+categories: ["Indexing"]
+tags: ["RAG", "Indexing"]
 math: true
 license: 
 hidden: false
