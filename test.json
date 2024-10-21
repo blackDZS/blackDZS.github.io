@@ -1,0 +1,66 @@
+[
+    {
+        'attributed': 1,
+        'reason': 'This statement is directly supported by the context, which '
+                    "describes the Eiffel Tower's location and significance.",
+        'statement': '埃菲尔铁塔（法语：Tour Eiffel，/ˈaɪfəl/ [tuʁ‿ɛfɛl] '
+               '（ⓘ），也常称为巴黎铁塔）是位于法国巴黎第七区、塞纳河畔战神广场的铁制镂空塔，世界著名建筑，也是法国文化象征之一，巴黎城市地标之一，巴黎最高建筑物。'
+    },
+ {'attributed': 0,
+  'reason': 'The context does not mention this specific address.',
+  'statement': '正式地址为Rue Anatole-France 5号。'},
+ {'attributed': 1,
+  'reason': 'This information is directly stated in the context.',
+  'statement': '埃菲尔铁塔建成于1889年，初名为“三百米塔”，后得名自其设计师居斯塔夫·埃菲尔。'},
+ {'attributed': 0,
+  'reason': "While the context discusses the Eiffel Tower's significance, it "
+            'does not specifically refer to it as a technological masterpiece '
+            'or the most visited paid monument.',
+  'statement': '铁塔是世界建筑史上的技术杰作，也是世界上最多人付费参观的名胜古迹，'},
+ {'attributed': 0,
+  'reason': 'The context does not provide specific visitor statistics or '
+            'ranking.',
+  'statement': '这个为了世界博览会而落成的金属建筑，2011年约有698万人参观，是法国参观人数第二多的文化景点。'},
+ {'attributed': 0,
+  'reason': 'The context does not mention the inclusion in engineering history '
+            'landmarks or UNESCO World Heritage status.',
+  'statement': '1986年美国土木工程师协会将该建筑列入国际土木工程历史古迹，1991年，埃菲尔铁塔连同巴黎塞纳河沿岸整座被列入世界遗产。'},
+ {'attributed': 0,
+  'reason': 'The context does not provide specific height or duration of being '
+            'the tallest man-made structure.',
+  'statement': '埃菲尔铁塔以312米的高度，占据世界最高人造建筑的位置长达四十年，'},
+ {'attributed': 0,
+  'reason': 'The context does not mention the installation of antennas or '
+            'height increases.',
+  'statement': '铁塔的总高度曾通过安装天线而多次提高。'},
+ {'attributed': 0,
+  'reason': 'There is no mention of antennas being used for scientific '
+            'experiments or broadcasting.',
+  'statement': '这些天线曾被用于许多科学实验，现在主要用于发射广播电视信号。'}]
+Context Recall:  0.2222222222222222
+❯ python scripts/context_recall.py
+[{'attributed': 1,
+  'reason': '该句描述了埃菲尔铁塔的位置和其重要性，与上下文一致。',
+  'statement': '埃菲尔铁塔（法语：Tour Eiffel，/ˈaɪfəl/ [tuʁ‿ɛfɛl] '
+               '（ⓘ），也常称为巴黎铁塔）是位于法国巴黎第七区、塞纳河畔战神广场的铁制镂空塔，世界著名建筑，也是法国文化象征之一，巴黎城市地标之一，巴黎最高建筑物。'},
+ {'attributed': 0,
+  'reason': '上下文中并未提及埃菲尔铁塔的具体地址。',
+  'statement': '正式地址为Rue Anatole-France 5号。'},
+ {'attributed': 1,
+  'reason': '该句中的信息与上下文一致，明确提到其建成时间和命名。',
+  'statement': '埃菲尔铁塔建成于1889年，初名为“三百米塔”，后得名自其设计师居斯塔夫·埃菲尔。'},
+ {'attributed': 0,
+  'reason': '上下文没有提到关于参观人数或其作为技术杰作的具体描述。',
+  'statement': '铁塔是世界建筑史上的技术杰作，也是世界上最多人付费参观的名胜古迹，这个为了世界博览会而落成的金属建筑，2011年约有698万人参观，是法国参观人数第二多的文化景点。'},
+ {'attributed': 0,
+  'reason': '上下文未提及关于建筑的历史遗产地位的信息。',
+  'statement': '1986年美国土木工程师协会将该建筑列入国际土木工程历史古迹，1991年，埃菲尔铁塔连同巴黎塞纳河沿岸整座被列入世界遗产。'},
+ {'attributed': 0,
+  'reason': '上下文中没有提到埃菲尔铁塔的高度或其历史地位。',
+  'statement': '埃菲尔铁塔以312米的高度，占据世界最高人造建筑的位置长达四十年，直到纽约克莱斯勒大楼的出现。'},
+ {'attributed': 0,
+  'reason': '上下文没有包含关于观景平台的高度或排名的信息。',
+  'statement': '其位于279.11米处的观景平台是欧盟范围内公众能够抵达的最高的观景台，在全欧洲范围内仅次于莫斯科的奥斯坦金诺电视塔。'},
+ {'attributed': 0,
+  'reason': '上下文没有提及天线或科学实验相关的信息。',
+  'statement': '铁塔的总高度曾通过安装天线而多次提高。这些天线曾被用于许多科学实验，现在主要用于发射广播电视信号。'}]
