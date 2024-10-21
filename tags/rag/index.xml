@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>RAG on DIZS' Blog</title><link>https://blackdzs.github.io/tags/rag/</link><description>Recent content in RAG on DIZS' Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 15 Oct 2024 20:40:03 +0800</lastBuildDate><atom:link href="https://blackdzs.github.io/tags/rag/index.xml" rel="self" type="application/rss+xml"/><item><title>深入解析TF-IDF算法：原理、应用及Python实现详解</title><link>https://blackdzs.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90tf-idf%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E5%BA%94%E7%94%A8%E5%8F%8Apython%E5%AE%9E%E7%8E%B0%E8%AF%A6%E8%A7%A3/</link><pubDate>Tue, 15 Oct 2024 20:40:03 +0800</pubDate><guid>https://blackdzs.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90tf-idf%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E5%BA%94%E7%94%A8%E5%8F%8Apython%E5%AE%9E%E7%8E%B0%E8%AF%A6%E8%A7%A3/</guid><description>&lt;h1 id="tf-idf-算法研究文档">TF-IDF 算法研究文档
+&lt;/h1>&lt;h2 id="1-背景">1. 背景
+&lt;/h2>&lt;p>&lt;strong>TF-IDF（Term Frequency-Inverse Document Frequency）&lt;/strong> 是一种经典的文本特征提取算法，广泛应用于信息检索、文本分类和推荐系统等场景。该算法能够衡量词语在单个文档中的重要性，并有效抑制高频常见词（如“的”“是”等）的干扰，从而更准确地表征文档内容。此外，TF-IDF 在基于大模型的 &lt;strong>RAG（Retrieval-Augmented Generation）系统&lt;/strong> 中也被用于提升检索过程的召回率，帮助更全面地获取相关信息。&lt;/p>
+&lt;h2 id="2-算法原理">2. 算法原理
+&lt;/h2>&lt;p>TF-IDF 通过两个重要指标来度量词语的重要性：&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>TF（词频，Term Frequency）&lt;/strong>&lt;br>
+词频指某个词在一篇文档中出现的频率。假设有一个文档 \(d\)，词语 \(t\) 在该文档中的出现次数为 \(f(t, d)\)，则该词的 TF 定义为：&lt;br>
+&lt;/p>
+\[
+TF(t, d) = \frac{f(t, d)}{n(d)}
+\]&lt;p>
+其中，\(n(d)\) 表示文档 \(d\) 中的总词数。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>IDF（逆文档频率，Inverse Document Frequency）&lt;/strong>&lt;br>
+IDF 用来衡量一个词语在整个语料库中的重要性。如果一个词语在很多文档中出现，那么它的重要性应被降低。假设语料库中有 \(N\) 篇文档，其中包含词 \(t\) 的文档数为 \(n_t\)。IDF 的定义为：&lt;br>
+&lt;/p>
+\[
+IDF(t) = \log \frac{N}{1 + n_t}
+\]&lt;p>
+这里加 1 是为了避免分母为 0 的情况。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>TF-IDF 计算公式&lt;/strong>&lt;br>
+TF-IDF 将 TF 和 IDF 相乘，得到词语 \(t\) 在文档 \(d\) 中的重要性分数：&lt;br>
+&lt;/p>
+\[
+TF\text{-}IDF(t, d) = TF(t, d) \times IDF(t)
+\]&lt;/li>
+&lt;/ul>
+&lt;h2 id="3-示例">3. 示例
+&lt;/h2>&lt;p>假设我们有如下语料库，共 3 篇文档：&lt;br>
+&lt;strong>文档 1&lt;/strong>：机器学习 是 人工智能 的 分支&lt;br>
+&lt;strong>文档 2&lt;/strong>：机器学习 包括 深度学习 和 传统算法&lt;br>
+&lt;strong>文档 3&lt;/strong>：深度学习 是 机器学习 的 重要 领域&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>词频（TF）计算&lt;br>
+对“机器学习”进行计算：&lt;/p>
+&lt;ul>
+&lt;li>文档 1：“机器学习”出现 1 次，总词数 6，TF = 1/6&lt;/li>
+&lt;li>文档 2：“机器学习”出现 1 次，总词数 6，TF = 1/6&lt;/li>
+&lt;li>文档 3：“机器学习”出现 1 次，总词数 7，TF = 1/7&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>逆文档频率（IDF）计算&lt;br>
+在 3 篇文档中，“机器学习”出现在 3 篇，因此：&lt;br>
+&lt;/p>
+\[
+IDF(\text{机器学习}) = \log \frac{3}{1 + 3} = \log \frac{3}{4} \approx -0.125
+\]&lt;/li>
+&lt;li>
+&lt;p>TF-IDF 计算&lt;br>
+以“机器学习”为例：&lt;/p>
+&lt;ul>
+&lt;li>文档 1：TF-IDF = \(1/6 \times -0.125 = -0.0208\)&lt;/li>
+&lt;li>文档 2：TF-IDF = \(1/6 \times -0.125 = -0.0208\)&lt;/li>
+&lt;li>文档 3：TF-IDF = \(1/7 \times -0.125 \approx -0.0179\)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>结果分析&lt;br>
+由于“机器学习”在所有文档中均出现，因此其 IDF 值较低，意味着它的辨识度不高。在实践中，诸如“的”“是”等高频词语往往会被 TF-IDF 削弱，从而凸显出更具区分性的词汇。&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="4-应用场景">4. 应用场景
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>搜索引擎&lt;/strong>&lt;br>
+TF-IDF 可用于根据查询词对文档的重要性进行排序，从而提高搜索结果的相关性。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>文本分类&lt;/strong>&lt;br>
+使用 TF-IDF 提取文档的特征向量，输入到机器学习模型（如 SVM、朴素贝叶斯等）进行分类。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>推荐系统&lt;/strong>&lt;br>
+在内容推荐中，基于 TF-IDF 计算用户对不同文档的兴趣度，推荐个性化内容。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>关键词提取&lt;/strong>&lt;br>
+自动从文本中提取重要关键词，帮助摘要生成或标签推荐。&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="5-优缺点">5. 优缺点
+&lt;/h2>&lt;p>&lt;strong>优点：&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>简单易实现&lt;/li>
+&lt;li>计算效率高，适合大规模文本处理&lt;/li>
+&lt;li>能有效衡量词汇在文档中的重要性&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>缺点：&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>无法捕捉词语之间的语义关系&lt;/li>
+&lt;li>对长文档不够鲁棒，容易偏向高频词&lt;/li>
+&lt;li>静态权重无法适应动态的语料库更新&lt;/li>
+&lt;/ul>
+&lt;h2 id="6-结论">6. 结论
+&lt;/h2>&lt;p>TF-IDF 作为一种经典的文本分析算法，尽管已经存在多年，但在信息检索等领域依然具有广泛的应用价值。它通过结合词频和逆文档频率，有效地筛选出具有辨识度的词汇。然而，随着深度学习和预训练模型的发展，像 BERT、GPT 等模型逐渐成为文本处理的主流。尽管如此，TF-IDF 由于其简单高效的特点，在某些场景中仍是一个不可替代的工具。&lt;/p>
+&lt;h2 id="7-代码实现示例python">7. 代码实现示例（Python）
+&lt;/h2>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">from&lt;/span> &lt;span class="nn">sklearn.feature_extraction.text&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">TfidfVectorizer&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 语料库&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">corpus&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;机器学习 是 人工智能 的 分支&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;机器学习 包括 深度学习 和 传统算法&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;深度学习 是 机器学习 的 重要 领域&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 初始化 TF-IDF 向量化器&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">vectorizer&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">TfidfVectorizer&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">X&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">vectorizer&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">fit_transform&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">corpus&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 输出 TF-IDF 权重矩阵&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;词汇表：&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">vectorizer&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">get_feature_names_out&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;TF-IDF 权重矩阵：&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">X&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">toarray&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="输出示例">输出示例
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">词汇表： [&amp;#39;人工智能&amp;#39; &amp;#39;传统算法&amp;#39; &amp;#39;分支&amp;#39; &amp;#39;包括&amp;#39; &amp;#39;机器学习&amp;#39; &amp;#39;深度学习&amp;#39; &amp;#39;重要&amp;#39; &amp;#39;领域&amp;#39;]
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">TF-IDF 权重矩阵：
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> [[0.65249088 0. 0.65249088 0. 0.38537163 0.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0. 0. ]
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> [0. 0.5844829 0. 0.5844829 0.34520502 0.44451431
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0. 0. ]
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> [0. 0. 0. 0. 0.34520502 0.44451431
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0.5844829 0.5844829 ]]
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="8-参考文献">8. 参考文献
+&lt;/h2>&lt;ul>
+&lt;li>Salton, G., &amp;amp; Buckley, C. (1988). &lt;em>Term-weighting approaches in automatic text retrieval.&lt;/em> Information Processing &amp;amp; Management, 24(5), 513–523.&lt;/li>
+&lt;li>Manning, C. D., Raghavan, P., &amp;amp; Schütze, H. (2008). &lt;em>Introduction to Information Retrieval.&lt;/em> Cambridge University Press.&lt;/li>
+&lt;/ul></description></item></channel></rss>

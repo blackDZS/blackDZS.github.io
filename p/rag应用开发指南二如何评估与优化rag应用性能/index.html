@@ -1,0 +1,604 @@
+<!doctype html><html lang=zh-cn dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="介绍 在深入解析RAG原理与实现一文中，我们探讨了如何构建RAG应用。然而，在成功构建RAG应用后，新的挑战随之而来：如何评估其性能？我们需要什么样的量化指标来进行有效的评估？\nRAG评估 评估指标 在RAG流程中，主要包括三个核心部分：问题（Query）、检索到的文档（Context）以及模型生成的答案（Answer）。在评估过程中，我们还需要真实答案（Ground Truth）作为基准。在RAG应用中，我们关注两个关键点：其一是检索到的文档（Context），其二是基于检索到的文档所生成的答案（Answer）。下图1展示了这两个部分设置的评估指标，其中左侧列出了与Answer相关的指标，右侧则呈现了与Context相关的指标。指标计算方法可以参考RAGAS Metrics\nContext\nContext Relevance: 评估Context与Query的相关性 Context Utilization: 根据Context和Answer计算Context利用率 Context Precision: 根据Context和Ground Truth计算检索到的Context准确率 Context Recall: 根据Context和Ground Truth计算检索到的Context召回率 Context Entities Recall: 根据Context和Ground Truth计算检索到的Context 中Entities的召回率 Answer\nAnswer Relevance: 根据Query和Answer计算Answer与Query的相关性(使用Embedding向量计算) Answer Faithfulness: 根据Context和Answer计算Answer是否来源于Context Answer Semantic Similarity: 根据Ground Truth和Answer计算Answer与Ground Truth的语义相似性(使用Embedding向量计算) Answer Correctness: 根据Ground Truth和Answer计算Answer准确率(使用LLM判断) 通过以上评估指标，我们能够更全面地评价RAG系统的性能。\n图 1. RAG 评估指标 计算方法 尽管大型语言模型（LLM）的上下文长度已显著增加，能够将整个文档甚至文本语料库纳入上下文窗口，但在实际应用中，这种做法往往效率低下，容易分散模型的注意力，同时也会增加推理延迟和成本。对于任何特定查询，仅有少量的文本可能具有相关性，但在每次推理时，上下文窗口中的所有token都需被处理。理想情况下，LLM 应该只处理与查询相关的token。因此，在检索增强生成（RAG）应用中，检索过程的主要目标便是精准识别并提取与给定查询相关的token。\nContext Precison Context Precision（上下文精度）是信息检索和问答系统中用来评估检索结果质量的重要指标之一。在检索过程中，系统可能会返回多个与用户查询相关的文档，这些文档的内容可能会对生成答案产生不同程度的影响。Context Precision的核心在于衡量在检索到的所有相关文档中，有多少文档实际上对生成用户需要的答案是有帮助的。\n\\[ Context Precision = \\frac{有用的文档数量}{相关文档数量} \\] 相关文档数量 ：指检索系统返回的所有相关文档的总数。 有用文档数量 ：指在这些相关文档中，能够为生成正确答案提供有效信息的文档数量。 那么如何衡量文档对于答案生成是否有用呢？传统的NLP方法中可以使用EM算法，或者计算文档和答案之间词级匹配，这些方法仅计算词级别的重叠，忽略了语义上的近似表达。例如，“机器学习用于预测”与“模型被训练来预测”语义相近，但词汇不完全匹配，导致得分偏低。对于开放性问答任务，上下文和答案可能有多种合理表述，传统的机器学习方法无法处理这种问题。同时如果文档包含大量与问题无关的内容，只是偶尔提到了一些相关词汇，会导致误判。为了解决这些问题，可以使用基于大模型的计算方法，依赖于大模型的上下文学习以及推理能力进行判断文档对于答案生成是否有用，如：\n"><title>RAG应用开发指南（二）：如何评估与优化RAG应用性能</title>
+<link rel=canonical href=https://blackdzs.github.io/p/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97%E4%BA%8C%E5%A6%82%E4%BD%95%E8%AF%84%E4%BC%B0%E4%B8%8E%E4%BC%98%E5%8C%96rag%E5%BA%94%E7%94%A8%E6%80%A7%E8%83%BD/><link rel=stylesheet href=/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css><meta property='og:title' content="RAG应用开发指南（二）：如何评估与优化RAG应用性能"><meta property='og:description' content="介绍 在深入解析RAG原理与实现一文中，我们探讨了如何构建RAG应用。然而，在成功构建RAG应用后，新的挑战随之而来：如何评估其性能？我们需要什么样的量化指标来进行有效的评估？\nRAG评估 评估指标 在RAG流程中，主要包括三个核心部分：问题（Query）、检索到的文档（Context）以及模型生成的答案（Answer）。在评估过程中，我们还需要真实答案（Ground Truth）作为基准。在RAG应用中，我们关注两个关键点：其一是检索到的文档（Context），其二是基于检索到的文档所生成的答案（Answer）。下图1展示了这两个部分设置的评估指标，其中左侧列出了与Answer相关的指标，右侧则呈现了与Context相关的指标。指标计算方法可以参考RAGAS Metrics\nContext\nContext Relevance: 评估Context与Query的相关性 Context Utilization: 根据Context和Answer计算Context利用率 Context Precision: 根据Context和Ground Truth计算检索到的Context准确率 Context Recall: 根据Context和Ground Truth计算检索到的Context召回率 Context Entities Recall: 根据Context和Ground Truth计算检索到的Context 中Entities的召回率 Answer\nAnswer Relevance: 根据Query和Answer计算Answer与Query的相关性(使用Embedding向量计算) Answer Faithfulness: 根据Context和Answer计算Answer是否来源于Context Answer Semantic Similarity: 根据Ground Truth和Answer计算Answer与Ground Truth的语义相似性(使用Embedding向量计算) Answer Correctness: 根据Ground Truth和Answer计算Answer准确率(使用LLM判断) 通过以上评估指标，我们能够更全面地评价RAG系统的性能。\n图 1. RAG 评估指标 计算方法 尽管大型语言模型（LLM）的上下文长度已显著增加，能够将整个文档甚至文本语料库纳入上下文窗口，但在实际应用中，这种做法往往效率低下，容易分散模型的注意力，同时也会增加推理延迟和成本。对于任何特定查询，仅有少量的文本可能具有相关性，但在每次推理时，上下文窗口中的所有token都需被处理。理想情况下，LLM 应该只处理与查询相关的token。因此，在检索增强生成（RAG）应用中，检索过程的主要目标便是精准识别并提取与给定查询相关的token。\nContext Precison Context Precision（上下文精度）是信息检索和问答系统中用来评估检索结果质量的重要指标之一。在检索过程中，系统可能会返回多个与用户查询相关的文档，这些文档的内容可能会对生成答案产生不同程度的影响。Context Precision的核心在于衡量在检索到的所有相关文档中，有多少文档实际上对生成用户需要的答案是有帮助的。\n\\[ Context Precision = \\frac{有用的文档数量}{相关文档数量} \\] 相关文档数量 ：指检索系统返回的所有相关文档的总数。 有用文档数量 ：指在这些相关文档中，能够为生成正确答案提供有效信息的文档数量。 那么如何衡量文档对于答案生成是否有用呢？传统的NLP方法中可以使用EM算法，或者计算文档和答案之间词级匹配，这些方法仅计算词级别的重叠，忽略了语义上的近似表达。例如，“机器学习用于预测”与“模型被训练来预测”语义相近，但词汇不完全匹配，导致得分偏低。对于开放性问答任务，上下文和答案可能有多种合理表述，传统的机器学习方法无法处理这种问题。同时如果文档包含大量与问题无关的内容，只是偶尔提到了一些相关词汇，会导致误判。为了解决这些问题，可以使用基于大模型的计算方法，依赖于大模型的上下文学习以及推理能力进行判断文档对于答案生成是否有用，如：\n"><meta property='og:url' content='https://blackdzs.github.io/p/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97%E4%BA%8C%E5%A6%82%E4%BD%95%E8%AF%84%E4%BC%B0%E4%B8%8E%E4%BC%98%E5%8C%96rag%E5%BA%94%E7%94%A8%E6%80%A7%E8%83%BD/'><meta property='og:site_name' content="DIZS' Blog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='langchain'><meta property='article:tag' content='RAG应用开发'><meta property='article:published_time' content='2024-09-29T17:17:35+08:00'><meta property='article:modified_time' content='2024-09-29T17:17:35+08:00'><meta name=twitter:title content="RAG应用开发指南（二）：如何评估与优化RAG应用性能"><meta name=twitter:description content="介绍 在深入解析RAG原理与实现一文中，我们探讨了如何构建RAG应用。然而，在成功构建RAG应用后，新的挑战随之而来：如何评估其性能？我们需要什么样的量化指标来进行有效的评估？\nRAG评估 评估指标 在RAG流程中，主要包括三个核心部分：问题（Query）、检索到的文档（Context）以及模型生成的答案（Answer）。在评估过程中，我们还需要真实答案（Ground Truth）作为基准。在RAG应用中，我们关注两个关键点：其一是检索到的文档（Context），其二是基于检索到的文档所生成的答案（Answer）。下图1展示了这两个部分设置的评估指标，其中左侧列出了与Answer相关的指标，右侧则呈现了与Context相关的指标。指标计算方法可以参考RAGAS Metrics\nContext\nContext Relevance: 评估Context与Query的相关性 Context Utilization: 根据Context和Answer计算Context利用率 Context Precision: 根据Context和Ground Truth计算检索到的Context准确率 Context Recall: 根据Context和Ground Truth计算检索到的Context召回率 Context Entities Recall: 根据Context和Ground Truth计算检索到的Context 中Entities的召回率 Answer\nAnswer Relevance: 根据Query和Answer计算Answer与Query的相关性(使用Embedding向量计算) Answer Faithfulness: 根据Context和Answer计算Answer是否来源于Context Answer Semantic Similarity: 根据Ground Truth和Answer计算Answer与Ground Truth的语义相似性(使用Embedding向量计算) Answer Correctness: 根据Ground Truth和Answer计算Answer准确率(使用LLM判断) 通过以上评估指标，我们能够更全面地评价RAG系统的性能。\n图 1. RAG 评估指标 计算方法 尽管大型语言模型（LLM）的上下文长度已显著增加，能够将整个文档甚至文本语料库纳入上下文窗口，但在实际应用中，这种做法往往效率低下，容易分散模型的注意力，同时也会增加推理延迟和成本。对于任何特定查询，仅有少量的文本可能具有相关性，但在每次推理时，上下文窗口中的所有token都需被处理。理想情况下，LLM 应该只处理与查询相关的token。因此，在检索增强生成（RAG）应用中，检索过程的主要目标便是精准识别并提取与给定查询相关的token。\nContext Precison Context Precision（上下文精度）是信息检索和问答系统中用来评估检索结果质量的重要指标之一。在检索过程中，系统可能会返回多个与用户查询相关的文档，这些文档的内容可能会对生成答案产生不同程度的影响。Context Precision的核心在于衡量在检索到的所有相关文档中，有多少文档实际上对生成用户需要的答案是有帮助的。\n\\[ Context Precision = \\frac{有用的文档数量}{相关文档数量} \\] 相关文档数量 ：指检索系统返回的所有相关文档的总数。 有用文档数量 ：指在这些相关文档中，能够为生成正确答案提供有效信息的文档数量。 那么如何衡量文档对于答案生成是否有用呢？传统的NLP方法中可以使用EM算法，或者计算文档和答案之间词级匹配，这些方法仅计算词级别的重叠，忽略了语义上的近似表达。例如，“机器学习用于预测”与“模型被训练来预测”语义相近，但词汇不完全匹配，导致得分偏低。对于开放性问答任务，上下文和答案可能有多种合理表述，传统的机器学习方法无法处理这种问题。同时如果文档包含大量与问题无关的内容，只是偶尔提到了一些相关词汇，会导致误判。为了解决这些问题，可以使用基于大模型的计算方法，依赖于大模型的上下文学习以及推理能力进行判断文档对于答案生成是否有用，如：\n"><link rel="shortcut icon" href=/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label=切换菜单>
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_hu7163769224600438988.png width=300 height=299 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/>DIZS' Blog</a></h1><h2 class=site-description>你好 👋! 欢迎来到我的博客
+在这里我会分享AI前沿技术和行业应用，你也可以关注我的公众号《AI 应用开发》</h2></div></header><ol class=menu-social><li><a href=mailto:1980694906@qq.com target=_blank title=Email rel=me><svg viewBox="0 0 24 21" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a></li><li><a href=https://github.com/blackDZS target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li><li><a href=https://www.zhihu.com/people/di-zhen-sheng target=_blank title=Zhihu rel=me><svg viewBox="0 0 24 24" fill="currentcolor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13.3334 3.60098v17.1471h1.79582l.75424 2.13703 3.18459-2.13703h3.93584V3.60098h-9.6705zm7.41375 14.87538h-1.79283l-2.24777 1.50849-.53276-1.50849h-.53875V5.94153h5.10911v12.53483h.00299zm-8.56906-7.18927H8.20334c.06285-1.34387.1287-3.12174.19754-5.17496h3.91788l-.00299-.24244c0-.01796-.00599-.43998-.06884-.87097-.06285-.44896-.19754-1.04457-.62854-1.04457h-6.5727c.13169-.61657.46991-2.08615.87995-2.80747l.19155-.33522-.3861-.02095c-.02394.0-.58663-.02694-1.23912.31726-1.06851.56868-1.5474 1.68807-1.75691 2.52612-.55072 2.18791-1.33489 3.70837-1.66712 4.35786-.09877.19155-.15863.30529-.18557.38311-.05387.14666-.02394.29332.0838.38909.31427.28434 1.14334-.0868 1.15232-.08979.01796-.00898.03891-.01796.06585-.02993.41603-.18856 1.64916-.74826 2.08914-2.52911h1.69705c.02095.96376.09278 4.14236.0868 5.17496H1.83715l-.06285.0449c-.69139.50582-.91288 1.8916-.92185 1.95146l-.0419.27536h4.99837c-.36814 2.34355-.79315 3.3941-1.01763 3.81313-.11074.20951-.21849.41902-.32025.62255-.63752 1.26306-1.29898 2.56802-3.7802 4.5973-.10775.0838-.20951.23944-.14367.41005.07183.18856.27835.27237.73629.27237.16162.0.35318-.00898.58065-.02993 1.49352-.13169 3.01698-.53875 4.04359-2.6219.50882-1.05056.94879-2.14601 1.31394-3.25941l4.08549 4.78886.14965-.35916c.02394-.05687.56868-1.38578.15264-2.87032l-.01497-.05387-3.23547-3.68143-.65847.49684c.19155-.78118.31726-1.49352.37413-2.12805h4.74995v-.23944c0-1.20021-.55371-1.91255-.57466-1.94248l-.07183-.08979z"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>主页</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>归档</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>搜索</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>暗色模式</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">目录</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#介绍>介绍</a></li><li><a href=#rag评估>RAG评估</a><ol><li><a href=#评估指标>评估指标</a></li><li><a href=#计算方法>计算方法</a><ol><li><a href=#context-precison>Context Precison</a></li><li><a href=#context-recall>Context Recall</a></li></ol></li></ol></li><li><a href=#引用>引用</a></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/>RAG应用开发</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97%E4%BA%8C%E5%A6%82%E4%BD%95%E8%AF%84%E4%BC%B0%E4%B8%8E%E4%BC%98%E5%8C%96rag%E5%BA%94%E7%94%A8%E6%80%A7%E8%83%BD/>RAG应用开发指南（二）：如何评估与优化RAG应用性能</a></h2></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published>Sep 29, 2024</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>阅读时长: 11 分钟</time></div></footer></div></header><section class=article-content><h2 id=介绍>介绍</h2><p>在<a class=link href=/p/rag%e5%ba%94%e7%94%a8%e5%bc%80%e5%8f%91%e6%8c%87%e5%8d%97%e4%b8%80%e6%b7%b1%e5%85%a5%e8%a7%a3%e6%9e%90rag%e5%8e%9f%e7%90%86%e4%b8%8e%e5%ae%9e%e7%8e%b0/ title=深入解析RAG原理与实现>深入解析RAG原理与实现</a>一文中，我们探讨了如何构建RAG应用。然而，在成功构建RAG应用后，新的挑战随之而来：如何评估其性能？我们需要什么样的量化指标来进行有效的评估？</p><h2 id=rag评估>RAG评估</h2><h3 id=评估指标>评估指标</h3><p>在RAG流程中，主要包括三个核心部分：问题（Query）、检索到的文档（Context）以及模型生成的答案（Answer）。在评估过程中，我们还需要真实答案（Ground Truth）作为基准。在RAG应用中，我们关注两个关键点：其一是检索到的文档（Context），其二是基于检索到的文档所生成的答案（Answer）。下图1展示了这两个部分设置的评估指标，其中左侧列出了与<code>Answer</code>相关的指标，右侧则呈现了与<code>Context</code>相关的指标。指标计算方法可以参考<a class=link href=https://docs.ragas.io/en/stable/concepts/metrics/index.html target=_blank rel=noopener>RAGAS Metrics</a></p><ul><li><p><strong>Context</strong></p><ul><li>Context Relevance: 评估Context与Query的相关性</li><li>Context Utilization: 根据Context和Answer计算Context利用率</li><li>Context Precision: 根据Context和Ground Truth计算检索到的Context准确率</li><li>Context Recall: 根据Context和Ground Truth计算检索到的Context召回率</li><li>Context Entities Recall: 根据Context和Ground Truth计算检索到的Context 中Entities的召回率</li></ul></li><li><p><strong>Answer</strong></p><ul><li>Answer Relevance: 根据Query和Answer计算Answer与Query的相关性(使用Embedding向量计算)</li><li>Answer Faithfulness: 根据Context和Answer计算Answer是否来源于Context</li><li>Answer Semantic Similarity: 根据Ground Truth和Answer计算Answer与Ground Truth的语义相似性(使用Embedding向量计算)</li><li>Answer Correctness: 根据Ground Truth和Answer计算Answer准确率(使用LLM判断)</li></ul></li></ul><p>通过以上评估指标，我们能够更全面地评价RAG系统的性能。</p><figure><img src=/images/RAG%20Metrics.png width=90%><figcaption><h4>图 1. RAG 评估指标</h4></figcaption></figure><h3 id=计算方法>计算方法</h3><p>尽管大型语言模型（LLM）的上下文长度已显著增加，能够将整个文档甚至文本语料库纳入上下文窗口，但在实际应用中，这种做法往往效率低下，容易分散模型的注意力，同时也会增加推理延迟和成本。对于任何特定查询，仅有少量的文本可能具有相关性，但在每次推理时，上下文窗口中的所有token都需被处理。理想情况下，LLM 应该只处理与查询相关的token。因此，在检索增强生成（RAG）应用中，检索过程的主要目标便是精准识别并提取与给定查询相关的token。</p><h4 id=context-precison>Context Precison</h4><p>Context Precision（上下文精度）是信息检索和问答系统中用来评估检索结果质量的重要指标之一。在检索过程中，系统可能会返回多个与用户查询相关的文档，这些文档的内容可能会对生成答案产生不同程度的影响。Context Precision的核心在于衡量在检索到的所有相关文档中，有多少文档实际上对生成用户需要的答案是有帮助的。</p>\[
+Context Precision = \frac{有用的文档数量}{相关文档数量}
+\]<ul><li>相关文档数量 ：指检索系统返回的所有相关文档的总数。</li><li>有用文档数量 ：指在这些相关文档中，能够为生成正确答案提供有效信息的文档数量。</li></ul><p>那么如何衡量文档对于答案生成是否有用呢？传统的NLP方法中可以使用EM算法，或者计算文档和答案之间词级匹配，这些方法仅计算词级别的重叠，忽略了语义上的近似表达。例如，“机器学习用于预测”与“模型被训练来预测”语义相近，但词汇不完全匹配，导致得分偏低。对于开放性问答任务，上下文和答案可能有多种合理表述，传统的机器学习方法无法处理这种问题。同时如果文档包含大量与问题无关的内容，只是偶尔提到了一些相关词汇，会导致误判。为了解决这些问题，可以使用基于大模型的计算方法，依赖于大模型的上下文学习以及推理能力进行判断文档对于答案生成是否有用，如：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>问题：什么是机器学习？ 
+</span></span><span class=line><span class=cl>文档：机器学习是一种通过数据训练模型的技术，用于模式识别和预测。
+</span></span><span class=line><span class=cl>提示：这个文档是否足以回答问题？请在1-5之间打分，并解释原因。
+</span></span></code></pre></td></tr></table></div></div><p>下面是对于衡量文档对于答案生成是否有用的Prompt示例，其中包含指令，格式化输出，示例和输入，通过这种设计方式可以让大模型生成格式化的评估结果。</p><figure><img src=/images/Context%20Precision.png width=90%><figcaption><h4>图 2. Context Precision Prompt</h4></figcaption></figure><p>因此Context Precision的计算过程如图3所示，首先是根据用户问题检索相关文档，对于每个文档使用图2中的Prompt输入到大模型中，获取大模型对于文档是否有用的判断，最终根据有用的文档数量计算<code>Context Precision</code></p><figure><img src=/images/Context%20Precision%20Caculate.png width=90%><figcaption><h4>图 3. Context Precision 计算过程</h4></figcaption></figure><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>json</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain_openai</span> <span class=kn>import</span> <span class=n>ChatOpenAI</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain_core.prompts</span> <span class=kn>import</span> <span class=n>ChatPromptTemplate</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>llm</span> <span class=o>=</span> <span class=n>ChatOpenAI</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>api_key</span><span class=o>=</span><span class=s2>&#34;your_api_key&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>model</span><span class=o>=</span><span class=s2>&#34;gpt-4o-mini&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>PROMPT</span> <span class=o>=</span> <span class=n>ChatPromptTemplate</span><span class=o>.</span><span class=n>from_messages</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;system&#34;</span><span class=p>,</span> 
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            Given question, answer and context verify if the context was useful in arriving at the given answer. Give verdict as &#34;1&#34; if useful and &#34;0&#34; if not with json output.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            The output should be a well-formatted JSON instance that conforms to the JSON schema below.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            As an example, for the schema {{&#34;properties&#34;: {{&#34;foo&#34;: {{&#34;title&#34;: &#34;Foo&#34;, &#34;description&#34;: &#34;a list of strings&#34;, &#34;type&#34;: &#34;array&#34;, &#34;items&#34;: {{&#34;type&#34;: &#34;string&#34;}}}}}}, &#34;required&#34;: [&#34;foo&#34;]}}
+</span></span></span><span class=line><span class=cl><span class=s2>            the object {{&#34;foo&#34;: [&#34;bar&#34;, &#34;baz&#34;]}} is a well-formatted instance of the schema. The object {{&#34;properties&#34;: {{&#34;foo&#34;: [&#34;bar&#34;, &#34;baz&#34;]}}}} is not well-formatted.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            Here is the output JSON schema:
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            </span><span class=si>{OutputSchema}</span><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>                                                
+</span></span></span><span class=line><span class=cl><span class=s2>            Do not return any preamble or explanations, return only a pure JSON string surrounded by triple backticks (```).
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            Examples:
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            question: &#34;What can you tell me about Albert Einstein?&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            context: &#34;Albert Einstein (14 March 1879 – 18 April 1955) was a German-born theoretical physicist, widely held to be one of the greatest and most influential scientists of all time. Best known for developing the theory of relativity, he also made important contributions to quantum mechanics, and was thus a central figure in the revolutionary reshaping of the scientific understanding of nature that modern physics accomplished in the first decades of the twentieth century. His mass–energy equivalence formula E = mc2, which arises from relativity theory, has been called &#39;the world&#39;s most famous equation&#39;. He received the 1921 Nobel Prize in Physics &#39;for his services to theoretical physics, and especially for his discovery of the law of the photoelectric effect&#39;, a pivotal step in the development of quantum theory. His work is also known for its influence on the philosophy of science. In a 1999 poll of 130 leading physicists worldwide by the British journal Physics World, Einstein was ranked the greatest physicist of all time. His intellectual achievements and originality have made Einstein synonymous with genius.&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            answer: &#34;Albert Einstein, born on 14 March 1879, was a German-born theoretical physicist, widely held to be one of the greatest and most influential scientists of all time. He received the 1921 Nobel Prize in Physics for his services to theoretical physics.&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            verification:
+</span></span></span><span class=line><span class=cl><span class=s2>            {{
+</span></span></span><span class=line><span class=cl><span class=s2>                &#34;reason&#34;: &#34;The provided context was indeed useful in arriving at the given answer. The context includes key information about Albert Einstein&#39;s life and contributions, which are reflected in the answer.&#34;,
+</span></span></span><span class=line><span class=cl><span class=s2>                &#34;verdict&#34;: 1
+</span></span></span><span class=line><span class=cl><span class=s2>            }}
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            question: &#34;who won 2020 icc world cup?&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            context: &#34;The 2022 ICC Men&#39;s T20 World Cup, held from October 16 to November 13, 2022, in Australia, was the eighth edition of the tournament. Originally scheduled for 2020, it was postponed due to the COVID-19 pandemic. England emerged victorious, defeating Pakistan by five wickets in the final to clinch their second ICC Men&#39;s T20 World Cup title.&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            answer: &#34;England&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            verification:
+</span></span></span><span class=line><span class=cl><span class=s2>            {{
+</span></span></span><span class=line><span class=cl><span class=s2>                &#34;reason&#34;: &#34;the context was useful in clarifying the situation regarding the 2020 ICC World Cup and indicating that England was the winner of the tournament that was intended to be held in 2020 but actually took place in 2022.&#34;,
+</span></span></span><span class=line><span class=cl><span class=s2>                &#34;verdict&#34;: 1
+</span></span></span><span class=line><span class=cl><span class=s2>            }}
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            question: &#34;What is the tallest mountain in the world?&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            context: &#34;The Andes is the longest continental mountain range in the world, located in South America. It stretches across seven countries and features many of the highest peaks in the Western Hemisphere. The range is known for its diverse ecosystems, including the high-altitude Andean Plateau and the Amazon rainforest.&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            answer: &#34;Mount Everest.&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            verification:
+</span></span></span><span class=line><span class=cl><span class=s2>            {{
+</span></span></span><span class=line><span class=cl><span class=s2>                &#34;reason&#34;: &#34;the provided context discusses the Andes mountain range, which, while impressive, does not include Mount Everest or directly relate to the question about the world&#39;s tallest mountain.&#34;,
+</span></span></span><span class=line><span class=cl><span class=s2>                &#34;verdict&#34;: 0
+</span></span></span><span class=line><span class=cl><span class=s2>            }}
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            Your actual task:
+</span></span></span><span class=line><span class=cl><span class=s2>            &#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;human&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            Your actual task:
+</span></span></span><span class=line><span class=cl><span class=s2>            question: &#34;</span><span class=si>{Query}</span><span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            context: &#34;</span><span class=si>{Context}</span><span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            answer: &#34;</span><span class=si>{Answer}</span><span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            verification:
+</span></span></span><span class=line><span class=cl><span class=s2>            &#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>    
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>get_v</span><span class=p>(</span><span class=n>query</span><span class=p>,</span> <span class=n>context</span><span class=p>,</span> <span class=n>answer</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>output_schema</span> <span class=o>=</span> <span class=s2>&#34;&#34;&#34;{&#34;description&#34;: &#34;Answer for the verification task wether the context was useful.&#34;, &#34;type&#34;: &#34;object&#34;, &#34;properties&#34;: {&#34;reason&#34;: {&#34;title&#34;: &#34;Reason&#34;, &#34;description&#34;: &#34;Reason for verification&#34;, &#34;type&#34;: &#34;string&#34;}, &#34;verdict&#34;: {&#34;title&#34;: &#34;Verdict&#34;, &#34;description&#34;: &#34;Binary (0/1) verdict of verification&#34;, &#34;type&#34;: &#34;integer&#34;}}, &#34;required&#34;: [&#34;reason&#34;, &#34;verdict&#34;]}&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=n>chain</span> <span class=o>=</span> <span class=n>PROMPT</span> <span class=o>|</span> <span class=n>llm</span>
+</span></span><span class=line><span class=cl>    <span class=n>result</span> <span class=o>=</span> <span class=n>chain</span><span class=o>.</span><span class=n>invoke</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;OutputSchema&#34;</span><span class=p>:</span> <span class=n>output_schema</span><span class=p>,</span> <span class=s2>&#34;Query&#34;</span><span class=p>:</span> <span class=n>query</span><span class=p>,</span> <span class=s2>&#34;Context&#34;</span><span class=p>:</span> <span class=n>context</span><span class=p>,</span> <span class=s2>&#34;Answer&#34;</span><span class=p>:</span> <span class=n>answer</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>content</span> <span class=o>=</span> <span class=n>result</span><span class=o>.</span><span class=n>content</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>content</span><span class=o>.</span><span class=n>startswith</span><span class=p>(</span><span class=s2>&#34;```json&#34;</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>content</span> <span class=o>=</span> <span class=n>content</span><span class=o>.</span><span class=n>replace</span><span class=p>(</span><span class=s2>&#34;```json&#34;</span><span class=p>,</span> <span class=s2>&#34;&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>content</span><span class=o>.</span><span class=n>endswith</span><span class=p>(</span><span class=s2>&#34;```&#34;</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>content</span> <span class=o>=</span> <span class=n>content</span><span class=o>.</span><span class=n>replace</span><span class=p>(</span><span class=s2>&#34;```&#34;</span><span class=p>,</span> <span class=s2>&#34;&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>content</span> <span class=o>=</span> <span class=n>json</span><span class=o>.</span><span class=n>loads</span><span class=p>(</span><span class=n>content</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>verdict</span> <span class=o>=</span> <span class=n>content</span><span class=p>[</span><span class=s2>&#34;verdict&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=k>except</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>verdict</span> <span class=o>=</span> <span class=kc>None</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=n>content</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>verdict</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>verdicts</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl><span class=n>query</span> <span class=o>=</span> <span class=s2>&#34;艾菲尔铁塔在哪里&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>contexts</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;埃菲尔铁塔（也常称为巴黎铁塔）是位于法国巴黎第七区、塞纳河畔战神广场的铁制镂空塔，世界著名建筑，也是法国文化象征之一[3]，巴黎城市地标之一，巴黎最高建筑物&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;埃菲尔铁塔建成于1889年，初名为“三百米塔”，后得名自其设计师居斯塔夫·埃菲尔。&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=n>answer</span> <span class=o>=</span> <span class=s2>&#34;艾菲尔铁塔位于巴黎&#34;</span>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=n>context</span> <span class=ow>in</span> <span class=n>contexts</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>verdicts</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>get_v</span><span class=p>(</span><span class=n>query</span><span class=o>=</span><span class=n>query</span><span class=p>,</span> <span class=n>context</span><span class=o>=</span><span class=n>context</span><span class=p>,</span> <span class=n>answer</span><span class=o>=</span><span class=n>answer</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=s2>&#34;Context Precision: &#34;</span><span class=p>,</span> <span class=nb>sum</span><span class=p>(</span><span class=n>verdicts</span><span class=p>)</span> <span class=o>/</span> <span class=nb>len</span><span class=p>(</span><span class=n>verdicts</span><span class=p>))</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>{&#39;reason&#39;: &#39;提供的上下文直接描述了艾菲尔铁塔的位置，明确说明它位于法国巴黎，因此上下文对于得出答案是非常有用的。&#39;, &#39;verdict&#39;: 1}
+</span></span><span class=line><span class=cl>{&#39;reason&#39;: &#39;上下文提到艾菲尔铁塔的建设和设计师，但没有直接说明它的位置，因此在回答中提到艾菲尔铁塔位于巴黎的内容未得到上下文的支持。&#39;, &#39;verdict&#39;: 0}
+</span></span><span class=line><span class=cl>Context Precision:  0.5
+</span></span></code></pre></td></tr></table></div></div><h4 id=context-recall>Context Recall</h4><p>Context Recall（上下文召回率） 是一种用于评估信息检索系统中检索结果覆盖程度的重要指标。它反映了系统在上下文中检索到的内容与预期信息（即 Ground Truth）之间的匹配程度。在开放问答系统中，Ground Truth 表示预期答案的完整内容或参考答案。Context Recall 的计算流程是通过将 Ground Truth 分解为多个独立的观点（statement），并判断这些句子是否能在检索到的上下文中找到对应内容。</p><p>Context Recall 的计算公式如下：</p>\[
+Context Recall = \frac{上下文中存在的正确观点数量}{Ground Truth 的所有观点数量}
+\]<ul><li>上下文中存在的正确观点数量：在给定上下文中能够找到支持的观点的数量。</li><li>Ground Truth 的所有观点数量：答案中涉及的所有观点的数量。</li></ul><p><strong>Prompt 示例</strong></p><figure><img src=/images/Context%20Recall.png width=90%><figcaption><h4>图 4. Context Recall Prompt</h4></figcaption></figure><p><strong>Context Recall 计算流程</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>1. 检索上下文：从信息源中获取相关上下文。
+</span></span><span class=line><span class=cl>2. 大模型判断：将Query, Context, Ground Truth 填入 Prompt 交给大模型，判断是否在上下文中找到匹配的观点(statement)。
+</span></span><span class=line><span class=cl>3. 计算 Context Recall：根据分类为1的statement和总statement计算召回率。
+</span></span></code></pre></td></tr></table></div></div><p>下图展示了 Context Recall 的计算过程：</p><figure><img src=/images/Context%20Recall%20Caculate.png width=90%><figcaption><h4>图 5. Context Recall 计算过程</h4></figcaption></figure><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>json</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>pprint</span> <span class=kn>import</span> <span class=n>pprint</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain_openai</span> <span class=kn>import</span> <span class=n>ChatOpenAI</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain_core.prompts</span> <span class=kn>import</span> <span class=n>ChatPromptTemplate</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>llm</span> <span class=o>=</span> <span class=n>ChatOpenAI</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>api_key</span><span class=o>=</span><span class=s2>&#34;your_api_key&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>model</span><span class=o>=</span><span class=s2>&#34;gpt-4o-mini&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>PROMPT</span> <span class=o>=</span> <span class=n>ChatPromptTemplate</span><span class=o>.</span><span class=n>from_messages</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;system&#34;</span><span class=p>,</span> 
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            Given a context, and an answer, analyze each sentence in the answer and classify if the sentence can be attributed to the given context or not. Use only &#39;Yes&#39; (1) or &#39;No&#39; (0) as a binary classification. Output json with reason.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            The output should be a well-formatted JSON instance that conforms to the JSON schema below.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            As an example, for the schema {{&#34;properties&#34;: {{&#34;foo&#34;: {{&#34;title&#34;: &#34;Foo&#34;, &#34;description&#34;: &#34;a list of strings&#34;, &#34;type&#34;: &#34;array&#34;, &#34;items&#34;: {{&#34;type&#34;: &#34;string&#34;}}}}}}, &#34;required&#34;: [&#34;foo&#34;]}}
+</span></span></span><span class=line><span class=cl><span class=s2>            the object {{&#34;foo&#34;: [&#34;bar&#34;, &#34;baz&#34;]}} is a well-formatted instance of the schema. The object {{&#34;properties&#34;: {{&#34;foo&#34;: [&#34;bar&#34;, &#34;baz&#34;]}}}} is not well-formatted.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            Here is the output JSON schema:
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            </span><span class=si>{OutputSchema}</span><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>                                                
+</span></span></span><span class=line><span class=cl><span class=s2>            Do not return any preamble or explanations, return only a pure JSON string surrounded by triple backticks (```).
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            Examples:
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            question: &#34;What can you tell me about albert Albert Einstein?&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            context: &#34;Albert Einstein (14 March 1879 - 18 April 1955) was a German-born theoretical physicist, widely held to be one of the greatest and most influential scientists of all time. Best known for developing the theory of relativity, he also made important contributions to quantum mechanics, and was thus a central figure in the revolutionary reshaping of the scientific understanding of nature that modern physics accomplished in the first decades of the twentieth century. His mass-energy equivalence formula E = mc2, which arises from relativity theory, has been called </span><span class=se>\&#39;</span><span class=s2>the world</span><span class=se>\&#39;</span><span class=s2>s most famous equation</span><span class=se>\&#39;</span><span class=s2>. He received the 1921 Nobel Prize in Physics </span><span class=se>\&#39;</span><span class=s2>for his services to theoretical physics, and especially for his discovery of the law of the photoelectric effect</span><span class=se>\&#39;</span><span class=s2>, a pivotal step in the development of quantum theory. His work is also known for its influence on the philosophy of science. In a 1999 poll of 130 leading physicists worldwide by the British journal Physics World, Einstein was ranked the greatest physicist of all time. His intellectual achievements and originality have made Einstein synonymous with genius.&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            answer: &#34;Albert Einstein born in 14 March 1879 was  German-born theoretical physicist, widely held to be one of the greatest and most influential scientists of all time. He received the 1921 Nobel Prize in Physics for his services to theoretical physics. He published 4 papers in 1905.  Einstein moved to Switzerland in 1895&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            classification: 
+</span></span></span><span class=line><span class=cl><span class=s2>            [{{&#34;statement&#34;: &#34;Albert Einstein, born on 14 March 1879, was a German-born theoretical physicist, widely held to be one of the greatest and most influential scientists of all time.&#34;, &#34;attributed&#34;: 1, &#34;reason&#34;: &#34;The date of birth of Einstein is mentioned clearly in the context.&#34;}}, 
+</span></span></span><span class=line><span class=cl><span class=s2>            {{&#34;statement&#34;: &#34;He received the 1921 Nobel Prize in Physics for his services to theoretical physics.&#34;, &#34;attributed&#34;: 1, &#34;reason&#34;: &#34;The exact sentence is present in the given context.&#34;}}, 
+</span></span></span><span class=line><span class=cl><span class=s2>            {{&#34;statement&#34;: &#34;He published 4 papers in 1905.&#34;, &#34;attributed&#34;: 0, &#34;reason&#34;: &#34;There is no mention about papers he wrote in the given context.&#34;}}, 
+</span></span></span><span class=line><span class=cl><span class=s2>            {{&#34;statement&#34;: &#34;Einstein moved to Switzerland in 1895.&#34;, &#34;attributed&#34;: 0, &#34;reason&#34;: &#34;There is no supporting evidence for this in the given context.&#34;}}]
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            question: &#34;who won 2020 icc world cup?&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            context: &#34;The 2022 ICC Men</span><span class=se>\&#39;</span><span class=s2>s T20 World Cup, held from October 16 to November 13, 2022, in Australia, was the eighth edition of the tournament. Originally scheduled for 2020, it was postponed due to the COVID-19 pandemic. England emerged victorious, defeating Pakistan by five wickets in the final to clinch their second ICC Men</span><span class=se>\&#39;</span><span class=s2>s T20 World Cup title.&#34;</span><span class=se>\n</span><span class=s2>answer: &#34;England&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            classification: 
+</span></span></span><span class=line><span class=cl><span class=s2>            [{{&#34;statement&#34;: &#34;England won the 2022 ICC Men</span><span class=se>\&#39;</span><span class=s2>s T20 World Cup.&#34;, &#34;attributed&#34;: 1, &#34;reason&#34;: &#34;From context it is clear that England defeated Pakistan to win the World Cup.&#34;}}]
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            question: &#34;What is the primary fuel for the Sun?&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            context: &#34;NULL&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            answer: &#34;Hydrogen&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            classification: 
+</span></span></span><span class=line><span class=cl><span class=s2>            [{{&#34;statement&#34;: &#34;The Sun</span><span class=se>\&#39;</span><span class=s2>s primary fuel is hydrogen.&#34;, &#34;attributed&#34;: 0, &#34;reason&#34;: &#34;The context contains no information&#34;}}]
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>            Your actual task:
+</span></span></span><span class=line><span class=cl><span class=s2>            &#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;human&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            Your actual task:
+</span></span></span><span class=line><span class=cl><span class=s2>            question: &#34;</span><span class=si>{Query}</span><span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            context: &#34;</span><span class=si>{Context}</span><span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            answer: &#34;</span><span class=si>{Answer}</span><span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>            classification:
+</span></span></span><span class=line><span class=cl><span class=s2>            &#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>    
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>get_v</span><span class=p>(</span><span class=n>query</span><span class=p>,</span> <span class=n>context</span><span class=p>,</span> <span class=n>answer</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>output_schema</span> <span class=o>=</span> <span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>    {&#34;type&#34;: &#34;array&#34;, &#34;items&#34;: {&#34;$ref&#34;: &#34;#/definitions/ContextRecallClassificationAnswer&#34;}, &#34;definitions&#34;: {&#34;ContextRecallClassificationAnswer&#34;: {&#34;title&#34;: &#34;ContextRecallClassificationAnswer&#34;, &#34;type&#34;: &#34;object&#34;, &#34;properties&#34;: {&#34;statement&#34;: {&#34;title&#34;: &#34;Statement&#34;, &#34;type&#34;: &#34;string&#34;}, &#34;attributed&#34;: {&#34;title&#34;: &#34;Attributed&#34;, &#34;type&#34;: &#34;integer&#34;}, &#34;reason&#34;: {&#34;title&#34;: &#34;Reason&#34;, &#34;type&#34;: &#34;string&#34;}}, &#34;required&#34;: [&#34;statement&#34;, &#34;attributed&#34;, &#34;reason&#34;]}}}
+</span></span></span><span class=line><span class=cl><span class=s2>    &#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=n>chain</span> <span class=o>=</span> <span class=n>PROMPT</span> <span class=o>|</span> <span class=n>llm</span>
+</span></span><span class=line><span class=cl>    <span class=n>result</span> <span class=o>=</span> <span class=n>chain</span><span class=o>.</span><span class=n>invoke</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;OutputSchema&#34;</span><span class=p>:</span> <span class=n>output_schema</span><span class=p>,</span> <span class=s2>&#34;Query&#34;</span><span class=p>:</span> <span class=n>query</span><span class=p>,</span> <span class=s2>&#34;Context&#34;</span><span class=p>:</span> <span class=n>context</span><span class=p>,</span> <span class=s2>&#34;Answer&#34;</span><span class=p>:</span> <span class=n>answer</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>content</span> <span class=o>=</span> <span class=n>result</span><span class=o>.</span><span class=n>content</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>content</span><span class=o>.</span><span class=n>startswith</span><span class=p>(</span><span class=s2>&#34;```json&#34;</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>content</span> <span class=o>=</span> <span class=n>content</span><span class=o>.</span><span class=n>replace</span><span class=p>(</span><span class=s2>&#34;```json&#34;</span><span class=p>,</span> <span class=s2>&#34;&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>content</span><span class=o>.</span><span class=n>endswith</span><span class=p>(</span><span class=s2>&#34;```&#34;</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>content</span> <span class=o>=</span> <span class=n>content</span><span class=o>.</span><span class=n>replace</span><span class=p>(</span><span class=s2>&#34;```&#34;</span><span class=p>,</span> <span class=s2>&#34;&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>content</span> <span class=o>=</span> <span class=n>json</span><span class=o>.</span><span class=n>loads</span><span class=p>(</span><span class=n>content</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>except</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=c1># verdict = None</span>
+</span></span><span class=line><span class=cl>        <span class=k>pass</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>content</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>classes</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl><span class=n>query</span> <span class=o>=</span> <span class=s2>&#34;艾菲尔铁塔在哪里&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>contexts</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;埃菲尔铁塔（也常称为巴黎铁塔）是位于法国巴黎第七区、塞纳河畔战神广场的铁制镂空塔，世界著名建筑，也是法国文化象征之一[3]，巴黎城市地标之一，巴黎最高建筑物&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;埃菲尔铁塔建成于1889年，初名为“三百米塔”，后得名自其设计师居斯塔夫·埃菲尔。&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=n>answer</span> <span class=o>=</span> <span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>埃菲尔铁塔（法语：Tour Eiffel，/ˈaɪfəl/ [tuʁ‿ɛfɛl] （ⓘ），也常称为巴黎铁塔）是位于法国巴黎第七区、塞纳河畔战神广场的铁制镂空塔，世界著名建筑，也是法国文化象征之一[3]，巴黎城市地标之一，巴黎最高建筑物。正式地址为Rue Anatole-France 5号。
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>埃菲尔铁塔建成于1889年，初名为“三百米塔”，后得名自其设计师居斯塔夫·埃菲尔。铁塔是世界建筑史上的技术杰作，也是世界上最多人付费参观的名胜古迹，这个为了世界博览会而落成的金属建筑，2011年约有698万人参观[4]，是法国参观人数第二多的文化景点。1986年美国土木工程师协会将该建筑列入国际土木工程历史古迹，1991年，埃菲尔铁塔连同巴黎塞纳河沿岸整座被列入世界遗产。[5]
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>埃菲尔铁塔以312米的高度，占据世界最高人造建筑的位置长达四十年，直到纽约克莱斯勒大楼的出现，其位于279.11米处的观景平台是欧盟范围内公众能够抵达的最高的观景台，在全欧洲范围内仅次于莫斯科的奥斯坦金诺电视塔。铁塔的总高度曾通过安装天线而多次提高。这些天线曾被用于许多科学实验，现在主要用于发射广播电视信号。
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>result</span> <span class=o>=</span> <span class=n>get_v</span><span class=p>(</span><span class=n>query</span><span class=p>,</span> <span class=s2>&#34;.&#34;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>contexts</span><span class=p>),</span> <span class=n>answer</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>pprint</span><span class=p>(</span><span class=n>result</span><span class=p>[:</span><span class=mi>3</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=n>res</span> <span class=ow>in</span> <span class=n>result</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>classes</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>res</span><span class=p>[</span><span class=s2>&#34;attributed&#34;</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=s2>&#34;Context Recall: &#34;</span><span class=p>,</span> <span class=nb>sum</span><span class=p>(</span><span class=n>classes</span><span class=p>)</span> <span class=o>/</span> <span class=nb>len</span><span class=p>(</span><span class=n>classes</span><span class=p>))</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>[{&#39;attributed&#39;: 1,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;This statement is directly supported by the context, which &#39;
+</span></span><span class=line><span class=cl>            &#34;describes the Eiffel Tower&#39;s location and significance.&#34;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;埃菲尔铁塔（法语：Tour Eiffel，/ˈaɪfəl/ [tuʁ‿ɛfɛl] &#39;
+</span></span><span class=line><span class=cl>               &#39;（ⓘ），也常称为巴黎铁塔）是位于法国巴黎第七区、塞纳河畔战神广场的铁制镂空塔，世界著名建筑，也是法国文化象征之一，巴黎城市地标之一，巴黎最高建筑物。&#39;},
+</span></span><span class=line><span class=cl> {&#39;attributed&#39;: 0,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;The context does not mention this specific address.&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;正式地址为Rue Anatole-France 5号。&#39;},
+</span></span><span class=line><span class=cl> {&#39;attributed&#39;: 1,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;This information is directly stated in the context.&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;埃菲尔铁塔建成于1889年，初名为“三百米塔”，后得名自其设计师居斯塔夫·埃菲尔。&#39;},
+</span></span><span class=line><span class=cl> {&#39;attributed&#39;: 0,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#34;While the context discusses the Eiffel Tower&#39;s significance, it &#34;
+</span></span><span class=line><span class=cl>            &#39;does not specifically refer to it as a technological masterpiece &#39;
+</span></span><span class=line><span class=cl>            &#39;or the most visited paid monument.&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;铁塔是世界建筑史上的技术杰作，也是世界上最多人付费参观的名胜古迹，&#39;},
+</span></span><span class=line><span class=cl> {&#39;attributed&#39;: 0,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;The context does not provide specific visitor statistics or &#39;
+</span></span><span class=line><span class=cl>            &#39;ranking.&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;这个为了世界博览会而落成的金属建筑，2011年约有698万人参观，是法国参观人数第二多的文化景点。&#39;},
+</span></span><span class=line><span class=cl> {&#39;attributed&#39;: 0,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;The context does not mention the inclusion in engineering history &#39;
+</span></span><span class=line><span class=cl>            &#39;landmarks or UNESCO World Heritage status.&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;1986年美国土木工程师协会将该建筑列入国际土木工程历史古迹，1991年，埃菲尔铁塔连同巴黎塞纳河沿岸整座被列入世界遗产。&#39;},
+</span></span><span class=line><span class=cl> {&#39;attributed&#39;: 0,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;The context does not provide specific height or duration of being &#39;
+</span></span><span class=line><span class=cl>            &#39;the tallest man-made structure.&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;埃菲尔铁塔以312米的高度，占据世界最高人造建筑的位置长达四十年，&#39;},
+</span></span><span class=line><span class=cl> {&#39;attributed&#39;: 0,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;The context does not mention the installation of antennas or &#39;
+</span></span><span class=line><span class=cl>            &#39;height increases.&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;铁塔的总高度曾通过安装天线而多次提高。&#39;},
+</span></span><span class=line><span class=cl> {&#39;attributed&#39;: 0,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;There is no mention of antennas being used for scientific &#39;
+</span></span><span class=line><span class=cl>            &#39;experiments or broadcasting.&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;这些天线曾被用于许多科学实验，现在主要用于发射广播电视信号。&#39;}]
+</span></span><span class=line><span class=cl>Context Recall:  0.2222222222222222
+</span></span><span class=line><span class=cl>❯ python scripts/context_recall.py
+</span></span><span class=line><span class=cl>[{&#39;attributed&#39;: 1,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;该句描述了埃菲尔铁塔的位置和其重要性，与上下文一致。&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;埃菲尔铁塔（法语：Tour Eiffel，/ˈaɪfəl/ [tuʁ‿ɛfɛl] &#39;
+</span></span><span class=line><span class=cl>               &#39;（ⓘ），也常称为巴黎铁塔）是位于法国巴黎第七区、塞纳河畔战神广场的铁制镂空塔，世界著名建筑，也是法国文化象征之一，巴黎城市地标之一，巴黎最高建筑物。&#39;},
+</span></span><span class=line><span class=cl> {&#39;attributed&#39;: 0,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;上下文中并未提及埃菲尔铁塔的具体地址。&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;正式地址为Rue Anatole-France 5号。&#39;},
+</span></span><span class=line><span class=cl> {&#39;attributed&#39;: 1,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;该句中的信息与上下文一致，明确提到其建成时间和命名。&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;埃菲尔铁塔建成于1889年，初名为“三百米塔”，后得名自其设计师居斯塔夫·埃菲尔。&#39;},
+</span></span><span class=line><span class=cl> {&#39;attributed&#39;: 0,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;上下文没有提到关于参观人数或其作为技术杰作的具体描述。&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;铁塔是世界建筑史上的技术杰作，也是世界上最多人付费参观的名胜古迹，这个为了世界博览会而落成的金属建筑，2011年约有698万人参观，是法国参观人数第二多的文化景点。&#39;},
+</span></span><span class=line><span class=cl> {&#39;attributed&#39;: 0,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;上下文未提及关于建筑的历史遗产地位的信息。&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;1986年美国土木工程师协会将该建筑列入国际土木工程历史古迹，1991年，埃菲尔铁塔连同巴黎塞纳河沿岸整座被列入世界遗产。&#39;},
+</span></span><span class=line><span class=cl> {&#39;attributed&#39;: 0,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;上下文中没有提到埃菲尔铁塔的高度或其历史地位。&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;埃菲尔铁塔以312米的高度，占据世界最高人造建筑的位置长达四十年，直到纽约克莱斯勒大楼的出现。&#39;},
+</span></span><span class=line><span class=cl> {&#39;attributed&#39;: 0,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;上下文没有包含关于观景平台的高度或排名的信息。&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;其位于279.11米处的观景平台是欧盟范围内公众能够抵达的最高的观景台，在全欧洲范围内仅次于莫斯科的奥斯坦金诺电视塔。&#39;},
+</span></span><span class=line><span class=cl> {&#39;attributed&#39;: 0,
+</span></span><span class=line><span class=cl>  &#39;reason&#39;: &#39;上下文没有提及天线或科学实验相关的信息。&#39;,
+</span></span><span class=line><span class=cl>  &#39;statement&#39;: &#39;铁塔的总高度曾通过安装天线而多次提高。这些天线曾被用于许多科学实验，现在主要用于发射广播电视信号。&#39;}]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Context Recall:  0.25
+</span></span></code></pre></td></tr></table></div></div><h2 id=引用>引用</h2><ol><li>Yu H, Gan A, Zhang K, et al. <a class=link href=https://arxiv.org/pdf/2005.11401 target=_blank rel=noopener>Evaluation of Retrieval-Augmented Generation: A Survey[J]</a>. arXiv preprint arXiv:2405.07437, 2024.</li><li><a class=link href=https://research.trychroma.com/evaluating-chunking target=_blank rel=noopener>https://research.trychroma.com/evaluating-chunking</a></li><li><a class=link href=https://github.com/explodinggradients/ragas target=_blank rel=noopener>https://github.com/explodinggradients/ragas</a></li></ol></section><footer class=article-footer><section class=article-tags><a href=/tags/langchain/>Langchain</a>
+<a href=/tags/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/>RAG应用开发</a></section><section class=article-copyright><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css integrity=sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js integrity=sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8 crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],ignoredClasses:["gist"]})})</script></article><aside class=related-content--wrapper><h2 class=section-title>相关文章</h2><div class=related-content><div class="flex article-list--tile"><article><a href=/p/rag%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97%E4%B8%80%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90rag%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/><div class=article-details><h2 class=article-title>RAG应用开发指南（一）：深入解析RAG原理与实现</h2></div></a></article><article><a href=/p/ai%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6%E5%AF%B9%E6%AF%94/><div class=article-details><h2 class=article-title>AI应用开发框架对比</h2></div></a></article></div></div></aside><div class=disqus-container><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//hugo-theme-stack.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div><style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style><script>window.addEventListener("onColorSchemeChange",e=>{typeof DISQUS=="object"&&DISQUS.reset({reload:!0})})</script><footer class=site-footer><section class=copyright>&copy;
+2024 DIZS' Blog</section><section class=powerby>使用 <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> 构建<br>主题 <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.29.0>Stack</a></b> 由 <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a> 设计</section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

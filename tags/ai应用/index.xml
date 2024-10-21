@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI应用 on DIZS' Blog</title><link>https://blackdzs.github.io/tags/ai%E5%BA%94%E7%94%A8/</link><description>Recent content in AI应用 on DIZS' Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 30 Sep 2024 10:25:23 +0800</lastBuildDate><atom:link href="https://blackdzs.github.io/tags/ai%E5%BA%94%E7%94%A8/index.xml" rel="self" type="application/rss+xml"/><item><title>AI应用开发框架对比</title><link>https://blackdzs.github.io/p/ai%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6%E5%AF%B9%E6%AF%94/</link><pubDate>Mon, 30 Sep 2024 10:25:23 +0800</pubDate><guid>https://blackdzs.github.io/p/ai%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6%E5%AF%B9%E6%AF%94/</guid><description>&lt;p>随着大模型的爆火，在业务场景中我们听到AI相关的需求越来越多，这时候我们就要面临一个问题，如何选择一个AI框架，让AI需求快速实现进行落地验证？本文将对当前主流的AI应用开发框架进行比较探讨。在深入讨论框架之前，我们需要先理解AI应用如何与现有业务进行整合，如数字员工、AI客服及AI助理等等。由于大模型在训练和部署阶段对硬件资源的要求较高，因此模型与应用通常会实现分离，Model as a Service（MaaS）成为新的AI开发范式。因此，在AI应用开发过程中，也会遵循这一范式，即将AI应用视为一个独立的服务，为下游各种各样的业务提供AI能力。&lt;/p>
+&lt;h2 id="ai应用开发框架">AI应用开发框架
+&lt;/h2>&lt;p>简单来说，目前AI应用开发框架的主流发展方向分为重代码开发和低代码开发平台。其中，重代码开发的代表性工具有：&lt;/p>
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://github.com/langchain-ai/langchain" target="_blank" rel="noopener"
+>Langchain&lt;/a>: 92.9k star&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/run-llama/llama_index" target="_blank" rel="noopener"
+>LlamaIndex&lt;/a>: 35.8k star&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/deepset-ai/haystack" target="_blank" rel="noopener"
+>Haystack&lt;/a>: 16.9k star&lt;/li>
+&lt;/ul>
+&lt;p>其中&lt;code>Langchain&lt;/code>的社区和功能性最完善，虽然其抽象程度比较高，定制化难度比较大，但是可以作为快速构建AI应用并进行验证的工具。&lt;code>LlamaIndex&lt;/code> 更加侧重于RAG应用开发，注重检索任务。&lt;code>Haystack&lt;/code>简单易懂，抽象程度比&lt;code>Langchain&lt;/code>低，因此定制化难度会低一些，但是目前社区的支持还比较少。&lt;/p>
+&lt;p>低代码开发平台的代表性工具有：&lt;/p>
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://github.com/langgenius/dify" target="_blank" rel="noopener"
+>Dify&lt;/a>: 46.8k star&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/FlowiseAI/Flowise" target="_blank" rel="noopener"
+>Flowise&lt;/a>: 30.2k star&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/langflow-ai/langflow" target="_blank" rel="noopener"
+>Langflow&lt;/a>: 30k star&lt;/li>
+&lt;/ul>
+&lt;p>这三个低代码平台都是通过托拉拽的方式进行AI应用开发，同时提供前端页面访问和API访问，因此可以快速与现有的业务场景进行集成。其中&lt;code>Dify&lt;/code>上手难度最小，但是涉及到定制化或者集成自定义的一些功能时难度最高；&lt;/p>
+&lt;p>&lt;code>Flowise&lt;/code>是基于&lt;code>langchainjs&lt;/code>和&lt;code>LLamaIndexTS&lt;/code>进行开发，相当于是对&lt;code>Langchain&lt;/code>和&lt;code>LlamaIndex&lt;/code>进行封装，并提供一个低代码平台进行&lt;code>Langchian&lt;/code>或者&lt;code>LlamaIndex&lt;/code>模块进行组合；&lt;/p>
+&lt;p>&lt;code>Langflow&lt;/code>是对&lt;code>Langchain&lt;/code>进行封装，形成低代码开发平台，其定制化程度非常高，支持在线实时更改节点代码实时生效。&lt;/p>
+&lt;figure>&lt;img src="https://blackdzs.github.io/images/AI%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E4%BD%8E%E4%BB%A3%E7%A0%81%E5%B9%B3%E5%8F%B0%E5%AF%B9%E6%AF%94.png" width="100%">&lt;figcaption>
+&lt;h4>AI应用开发低代码平台对比&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;h2 id="结论">结论
+&lt;/h2>&lt;p>在AI应用开发的初期，建议先选择&lt;code>Langchain&lt;/code>和&lt;code>Dify&lt;/code>作为首选工具，以便快速构建AI应用并进行落地验证。当面对某些实际需求时，如果这些框架无法满足，则可以考虑其他框架的实施方案。一方面，当前大模型及AI应用开发尚处于快速迭代阶段，各框架对新功能的支持程度存在差异，因此了解多个框架的特点是非常必要的。另一方面，AI框架和工具的同质化现象较为严重，从一个框架切换到另一个框架相对容易，因此不必过于担忧切换框架的成本问题。&lt;/p></description></item></channel></rss>
