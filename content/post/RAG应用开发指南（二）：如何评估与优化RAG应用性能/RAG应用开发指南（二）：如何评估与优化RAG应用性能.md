@@ -1,5 +1,5 @@
 ---
-title: "RAG应用开发指南（二）：如何评估与优化RAG应用性能"
+title: RAG应用开发指南（二）：如何评估与优化RAG应用性能
 description: 
 date: 2024-09-29T17:17:35+08:00
 image: 
@@ -21,14 +21,11 @@ draft: false
 在RAG流程中，主要包括三个核心部分：问题（Query）、检索到的文档（Context）以及模型生成的答案（Answer）。在评估过程中，我们还需要真实答案（Ground Truth）作为基准。在RAG应用中，我们关注两个关键点：其一是检索到的文档（Context），其二是基于检索到的文档所生成的答案（Answer）。下图1展示了这两个部分设置的评估指标，其中左侧列出了与`Answer`相关的指标，右侧则呈现了与`Context`相关的指标。指标计算方法可以参考[RAGAS Metrics](https://docs.ragas.io/en/stable/concepts/metrics/index.html)
 
 - **Context**
-    - Context Relevance: 评估Context与Query的相关性
-    - Context Utilization: 根据Context和Answer计算Context利用率
     - Context Precision: 根据Context和Ground Truth计算检索到的Context准确率
     - Context Recall: 根据Context和Ground Truth计算检索到的Context召回率
     - Context Entities Recall: 根据Context和Ground Truth计算检索到的Context 中Entities的召回率
 
 - **Answer**
-    - Answer Relevance: 根据Query和Answer计算Answer与Query的相关性(使用Embedding向量计算)
     - Answer Faithfulness: 根据Context和Answer计算Answer是否来源于Context
     - Answer Semantic Similarity: 根据Ground Truth和Answer计算Answer与Ground Truth的语义相似性(使用Embedding向量计算)
     - Answer Correctness: 根据Ground Truth和Answer计算Answer准确率(使用LLM判断)
@@ -421,8 +418,6 @@ from langchain_core.prompts import ChatPromptTemplate
 
 
 llm = ChatOpenAI(
-    api_key="sk-E8zStvbbqI1XAwDKFc880623482549D7B08eEd54D30898F3",
-    base_url="https://one-api.s.metames.cn:38443/v1",
     model="gpt-4o-mini"
 )
 
@@ -563,9 +558,6 @@ print("Context Entites Recall: ", compute_score(result_answer["entities"], resul
               '广播电视信号']}
 Context Entites Recall:  0.3999999998
 ```
-#### Context Utilization
-
-#### Context Relevance
 
 #### Answer Correctness
 
@@ -620,8 +612,6 @@ from langchain_core.prompts import ChatPromptTemplate
 
 
 llm = ChatOpenAI(
-    api_key="sk-E8zStvbbqI1XAwDKFc880623482549D7B08eEd54D30898F3",
-    base_url="https://one-api.s.metames.cn:38443/v1",
     model="gpt-4o-mini"
 )
 
@@ -767,6 +757,271 @@ print("Answer Correctness: ", compute_statement_presence(result))
          'statement': '埃菲尔铁塔位于法国巴黎第七区'}]}
 Answer Correctness:  0.2222222222222222
 ```
+
+#### Answer Semantic Similarity
+
+Answer Semantic Similarity（答案的语义相似性）是用来评估生成答案与原始事实在语义上相近程度的关键指标。通过计算生成答案与基本事实的嵌入向量之间的余弦相似度，可以量化这种相似性。如果设定了一个特定的阈值，根据计算结果，得分会被转换为二进制值；即，当余弦相似度大于或等于该阈值时，值为1，否则为0。
+
+\[
+   Answer\:Semantic\:Similarity = \cos(\hat{v}_{\text{answer}}, \hat{v}_{\text{fact}})
+\]
+
+- \(\hat{v}_{\text{answer}}\)：表示生成答案的嵌入向量。
+- \(\hat{v}_{\text{fact}}\)：表示基本事实的嵌入向量。
+- 阈值：用于将相似度得分转换为二进制判断的临界值。
+
+
+{{< figure src="/images/Answer Semantic Similarity Calculate.png" width="90%" align="center" title="图 9. Answer Semantic Similarity 计算过程" >}}
+
+```python
+import numpy as np
+from langchain_openai import OpenAIEmbeddings
+
+embeddings = OpenAIEmbeddings(
+    model="text-embedding-3-small",
+)
+
+query = "介绍下艾菲尔铁塔"
+ground_truth = """
+埃菲尔铁塔（法语：Tour Eiffel，/ˈaɪfəl/ [tuʁ‿ɛfɛl] （ⓘ），也常称为巴黎铁塔）是位于法国巴黎第七区、塞纳河畔战神广场的铁制镂空塔，世界著名建筑，也是法国文化象征之一[3]，巴黎城市地标之一，巴黎最高建筑物。正式地址为Rue Anatole-France 5号。
+
+埃菲尔铁塔建成于1889年，初名为“三百米塔”，后得名自其设计师居斯塔夫·埃菲尔。铁塔是世界建筑史上的技术杰作，也是世界上最多人付费参观的名胜古迹，这个为了世界博览会而落成的金属建筑，2011年约有698万人参观[4]，是法国参观人数第二多的文化景点。1986年美国土木工程师协会将该建筑列入国际土木工程历史古迹，1991年，埃菲尔铁塔连同巴黎塞纳河沿岸整座被列入世界遗产。[5]
+
+埃菲尔铁塔以312米的高度，占据世界最高人造建筑的位置长达四十年，直到纽约克莱斯勒大楼的出现，其位于279.11米处的观景平台是欧盟范围内公众能够抵达的最高的观景台，在全欧洲范围内仅次于莫斯科的奥斯坦金诺电视塔。铁塔的总高度曾通过安装天线而多次提高。这些天线曾被用于许多科学实验，现在主要用于发射广播电视信号。
+"""
+answer = "埃菲尔铁塔（也常称为巴黎铁塔）位于法国巴黎第七区"
+
+
+def compute_similarity(
+    answer, ground_truth, embeddings
+) -> float:
+    embedding_1 = np.array(embeddings.embed_query(ground_truth))
+    embedding_2 = np.array(embeddings.embed_query(answer))
+    # Normalization factors of the above embeddings
+    norms_1 = np.linalg.norm(embedding_1, keepdims=True)
+    norms_2 = np.linalg.norm(embedding_2, keepdims=True)
+    embedding_1_normalized = embedding_1 / norms_1
+    embedding_2_normalized = embedding_2 / norms_2
+    similarity = embedding_1_normalized @ embedding_2_normalized.T
+    score = similarity.flatten()
+    return score
+
+print("Answer Correctness: ", compute_similarity(answer, ground_truth, embeddings))
+```
+
+```text
+Answer Correctness:  [0.70861593]
+```
+
+#### Answer Fathfulness
+Faithfulness（忠实性）指标用于衡量生成答案与给定上下文之间的事实一致性。该指标通过生成答案和检索到的上下文进行计算，其结果被缩放至 (0,1) 区间，数值越高表示忠实性越强。
+
+如果生成的答案中所做出的所有陈述都能够从给定的上下文中推导出来，则视为忠实。在计算忠实性时，首先从生成的答案中识别出一组陈述，然后将每一个陈述与给定的上下文进行逐一核对，判断其是否可以从上下文中推导出来。忠实性得分的计算公式如下：
+\[
+Faithfulness score = \frac{可以推导出的陈述数量}{陈述总数量}
+\]
+
+
+- 可以推导出的陈述数量：指生成答案中，与给定上下文核对后确认可以推导出的陈述数量。
+- 陈述总数量：指从生成的答案中识别出的全部陈述数量。
+
+其中陈述总数量是通过大模型进行拆分，下面是根据RAG输出的答案生成陈述的Prompt
+
+{{< figure src="/images/Answer To Statements.png" width="90%" align="center" title="图 10. Answer To Statements Prompt" >}}
+
+可以推导出的陈述数量也是通过大模型进行判断，根据上述过程生成的陈述以及检索到的上下文，判断模型生成的答案是否可以在上下文中找到依据，下面给定上下文判断是否可以推导出的陈述的Prompt
+
+{{< figure src="/images/Answer Statements Fathfulness.png" width="90%" align="center" title="图 11. Answer Statements Fathfulness Prompt" >}}
+
+下面是Answer Fathfulness的计算过程
+
+{{< figure src="/images/Answer Fathfulness Calculate.png" width="90%" align="center" title="图 11. Answer Fathfulness 计算过程" >}}
+
+```python
+import json
+from pprint import pprint
+from langchain_openai import ChatOpenAI
+from pysbd import Segmenter
+from langchain_core.prompts import ChatPromptTemplate
+
+
+llm = ChatOpenAI(
+    model="gpt-4o-mini"
+)
+
+STATEMENTS_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system", 
+            """
+            Given a question, an answer, and sentences from the answer analyze the complexity of each sentence given under 'sentences' and break down each sentence into one or more fully understandable statements while also ensuring no pronouns are used in each statement. Format the outputs in JSON.
+
+            The output should be a well-formatted JSON instance that conforms to the JSON schema below.
+            As an example, for the schema {{"properties": {{"foo": {{"title": "Foo", "description": "a list of strings", "type": "array", "items": {{"type": "string"}}}}}}, "required": ["foo"]}}
+            the object {{"foo": ["bar", "baz"]}} is a well-formatted instance of the schema. The object {{"properties": {{"foo": ["bar", "baz"]}}}} is not well-formatted.
+
+            Here is the output JSON schema:
+
+            {OutputSchema}
+                                                
+            Do not return any preamble or explanations, return only a pure JSON string surrounded by triple backticks (```).
+
+
+            Examples:
+            question: "Who was Albert Einstein and what is he best known for?"
+            answer: "He was a German-born theoretical physicist, widely acknowledged to be one of the greatest and most influential physicists of all time. He was best known for developing the theory of relativity, he also made important contributions to the development of the theory of quantum mechanics."
+            sentences: 
+            "0:He was a German-born theoretical physicist, widely acknowledged to be one of the greatest and most influential physicists of all time. 
+            1:He was best known for developing the theory of relativity, he also made important contributions to the development of the theory of quantum mechanics."
+            analysis:
+            [{{"sentence_index": 0, "simpler_statements": ["Albert Einstein was a German-born theoretical physicist.", "Albert Einstein is recognized as one of the greatest and most influential physicists of all time."]}}, {{"sentence_index": 1, "simpler_statements": ["Albert Einstein was best known for developing the theory of relativity.", "Albert Einstein also made important contributions to the development of the theory of quantum mechanics."]}}]
+
+            Your actual task:
+            """
+        ),
+        (
+            "human",
+            """
+            Your actual task:
+            question:"{Query}"
+            answer:"{Answer}"
+            sentences:"{Sentences}"
+            analysis:
+            """
+        )
+    ]
+)    
+
+def get_statements(query, answer, sentences):
+    output_schema = """
+    {"type": "array", "items": {"$ref": "#/definitions/Statements"}, "definitions": {"Statements": {"title": "Statements", "type": "object", "properties": {"sentence_index": {"title": "Sentence Index", "description": "Index of the sentence from the statement list", "type": "integer"}, "simpler_statements": {"title": "Simpler Statements", "description": "the simpler statements", "type": "array", "items": {"type": "string"}}}, "required": ["sentence_index", "simpler_statements"]}}}
+    """
+    chain = STATEMENTS_PROMPT | llm
+    result = chain.invoke(
+        {
+            "OutputSchema": output_schema, "Query": query, "Answer": answer, "Sentences": sentences
+        }
+    )
+    content = result.content
+    if content.startswith("```json"):
+        content = content.replace("```json", "")
+    if content.endswith("```"):
+        content = content.replace("```", "")
+    try:
+        content = json.loads(content)
+    except:
+        # verdict = None
+        pass
+    return content
+
+classes = []
+query = "介绍下艾菲尔铁塔"
+contexts = [
+    "埃菲尔铁塔（也常称为巴黎铁塔）是位于法国巴黎第七区、塞纳河畔战神广场的铁制镂空塔，世界著名建筑，也是法国文化象征之一[3]，巴黎城市地标之一，巴黎最高建筑物",
+    "埃菲尔铁塔建成于1889年，初名为“三百米塔”，后得名自其设计师居斯塔夫·埃菲尔。"
+]
+ground_truth = """
+埃菲尔铁塔（法语：Tour Eiffel，/ˈaɪfəl/ [tuʁ‿ɛfɛl] （ⓘ），也常称为巴黎铁塔）是位于法国巴黎第七区、塞纳河畔战神广场的铁制镂空塔，世界著名建筑，也是法国文化象征之一[3]，巴黎城市地标之一，巴黎最高建筑物。正式地址为Rue Anatole-France 5号。
+
+埃菲尔铁塔建成于1889年，初名为“三百米塔”，后得名自其设计师居斯塔夫·埃菲尔。铁塔是世界建筑史上的技术杰作，也是世界上最多人付费参观的名胜古迹，这个为了世界博览会而落成的金属建筑，2011年约有698万人参观[4]，是法国参观人数第二多的文化景点。1986年美国土木工程师协会将该建筑列入国际土木工程历史古迹，1991年，埃菲尔铁塔连同巴黎塞纳河沿岸整座被列入世界遗产。[5]
+
+埃菲尔铁塔以312米的高度，占据世界最高人造建筑的位置长达四十年，直到纽约克莱斯勒大楼的出现，其位于279.11米处的观景平台是欧盟范围内公众能够抵达的最高的观景台，在全欧洲范围内仅次于莫斯科的奥斯坦金诺电视塔。铁塔的总高度曾通过安装天线而多次提高。这些天线曾被用于许多科学实验，现在主要用于发射广播电视信号。
+"""
+answer = "埃菲尔铁塔（也常称为巴黎铁塔）位于法国巴黎第七区"
+
+seg = Segmenter(language="zh")
+statements = seg.segment(answer)
+
+result = get_statements(query, answer, statements)
+pprint(result)
+
+
+FATHFULNESS_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system", 
+            """
+            Your task is to judge the faithfulness of a series of statements based on a given context. For each statement you must return verdict as 1 if the statement can be directly inferred based on the context or 0 if the statement can not be directly inferred based on the context.
+            
+            The output should be a well-formatted JSON instance that conforms to the JSON schema below.
+            As an example, for the schema {{"properties": {{"foo": {{"title": "Foo", "description": "a list of strings", "type": "array", "items": {{"type": "string"}}}}}}, "required": ["foo"]}}
+            the object {{"foo": ["bar", "baz"]}} is a well-formatted instance of the schema. The object {{"properties": {{"foo": ["bar", "baz"]}}}} is not well-formatted.
+
+            Here is the output JSON schema:
+
+            {OutputSchema}
+                                                
+            Do not return any preamble or explanations, return only a pure JSON string surrounded by triple backticks (```).
+
+
+            Examples:
+            context: "John is a student at XYZ University. He is pursuing a degree in Computer Science. He is enrolled in several courses this semester, including Data Structures, Algorithms, and Database Management. John is a diligent student and spends a significant amount of time studying and completing assignments. He often stays late in the library to work on his projects."
+            statements: ["John is majoring in Biology.", "John is taking a course on Artificial Intelligence.", "John is a dedicated student.", "John has a part-time job."]
+            answer: [{{"statement": "John is majoring in Biology.", "reason": "John\'s major is explicitly mentioned as Computer Science. There is no information suggesting he is majoring in Biology.", "verdict": 0}}, {{"statement": "John is taking a course on Artificial Intelligence.", "reason": "The context mentions the courses John is currently enrolled in, and Artificial Intelligence is not mentioned. Therefore, it cannot be deduced that John is taking a course on AI.", "verdict": 0}}, {{"statement": "John is a dedicated student.", "reason": "The context states that he spends a significant amount of time studying and completing assignments. Additionally, it mentions that he often stays late in the library to work on his projects, which implies dedication.", "verdict": 1}}, {{"statement": "John has a part-time job.", "reason": "There is no information given in the context about John having a part-time job.", "verdict": 0}}]
+
+            context: "Photosynthesis is a process used by plants, algae, and certain bacteria to convert light energy into chemical energy."
+            statements: ["Albert Einstein was a genius."]
+            answer: [{{"statement": "Albert Einstein was a genius.", "reason": "The context and statement are unrelated", "verdict": 0}}]
+            
+            Your actual task:
+            """
+        ),
+        (
+            "human",
+            """
+            Your actual task:
+            context:"{Context}"
+            statements:"{Statements}"
+            answer:
+            """
+        )
+    ]
+)
+
+
+def get_fathfullness_results(context, statements):
+    output_schema = """
+    {"type": "array", "items": {"$ref": "#/definitions/StatementFaithfulnessAnswer"}, "definitions": {"StatementFaithfulnessAnswer": {"title": "StatementFaithfulnessAnswer", "type": "object", "properties": {"statement": {"title": "Statement", "description": "the original statement, word-by-word", "type": "string"}, "reason": {"title": "Reason", "description": "the reason of the verdict", "type": "string"}, "verdict": {"title": "Verdict", "description": "the verdict(0/1) of the faithfulness.", "type": "integer"}}, "required": ["statement", "reason", "verdict"]}}}
+    """
+    chain = FATHFULNESS_PROMPT | llm
+    result = chain.invoke(
+        {
+            "OutputSchema": output_schema, "Context": context, "Statements": statements
+        }
+    )
+    content = result.content
+    if content.startswith("```json"):
+        content = content.replace("```json", "")
+    if content.endswith("```"):
+        content = content.replace("```", "")
+    try:
+        content = json.loads(content)
+    except:
+        # verdict = None
+        pass
+    return content
+
+results = get_fathfullness_results(".".join(contexts), statements)
+print(results)
+
+verdicts = [_["verdict"] for _ in results]
+print("Answer Fathfulness: ", sum(verdicts) / len(verdicts))
+```
+
+```text
+[{'sentence_index': 0,
+  'simpler_statements': ['埃菲尔铁塔也常称为巴黎铁塔。', '埃菲尔铁塔位于法国巴黎第七区。']}]
+[{'statement': '埃菲尔铁塔（也常称为巴黎铁塔）位于法国巴黎第七区', 'reason': '上下文明确提到埃菲尔铁塔位于法国巴黎第七区，因此该陈述可以直接推断。', 'verdict': 1}]
+Answer Fathfulness:  1.0
+```
+
+## 讨论
+在本文中，我们探讨了基于大型语言模型的RAG应用自动化评估方法，并详细阐述了每个评估指标的提示设计及其Python实现方式。通过本篇文章，我们不仅理解了如何利用大型语言模型进行评估，还可以根据自身的业务场景制定相应的评估指标。
+
+值得注意的是，在上述评估指标的计算过程中，我们使用了几个关键要素，即`Query`、`Context`、`Answer`和`Ground Truth`。其中，`Query`、`Context`和`Answer`是RAG应用的输入、中间变量和生成结果，这些要素相对容易获取。然而，获取`Ground Truth`通常较为困难。在一般情况下，`Ground Truth`可通过人工或专家标注获得，但这种方法往往需要大量的人力资源。
+
+如果我们能够解决自动生成`Ground Truth`的过程，那么整个评估流程将会实现自动化。在下一篇文章中，我们将深入探讨[如何基于文档自动生成高质量的问答数据](/p/rag应用开发指南三如何自动生成高质量的问答数据/ "如何自动生成高质量的问答数据")。
+
 ## 引用
 1. Yu H, Gan A, Zhang K, et al. [Evaluation of Retrieval-Augmented Generation: A Survey[J]](https://arxiv.org/pdf/2005.11401). arXiv preprint arXiv:2405.07437, 2024.
 2. https://research.trychroma.com/evaluating-chunking
