@@ -835,7 +835,7 @@ Faithfulness score = \frac{可以推导出的陈述数量}{陈述总数量}
 
 下面是Answer Fathfulness的计算过程
 
-{{< figure src="/images/Answer Fathfulness Calculate.png" width="90%" align="center" title="图 11. Answer Fathfulness 计算过程" >}}
+{{< figure src="/images/Answer Fathfulness Calculate.png" width="90%" align="center" title="图 12. Answer Fathfulness 计算过程" >}}
 
 ```python
 import json
