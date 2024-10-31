@@ -3,14 +3,19 @@ title: RAG应用开发指南（一）：深入解析RAG原理与实现
 description: 基于Langchain从零构建一个RAG应用
 date: 2024-09-25T19:47:59+08:00
 image: 
-categories: ["RAG应用开发"]
-tags: ["langchain", "RAG应用开发"]
+categories:
+  - RAG应用开发
+tags:
+  - langchain
+  - RAG应用开发
 math: true
 license: 
 hidden: false
 comments: true
 draft: false
-keywords: ["langchain", "RAG应用开发"]
+keywords:
+  - langchain
+  - RAG应用开发
 ---
 
 ## 1、介绍
@@ -60,7 +65,7 @@ from langchain_community.document_loaders import WebBaseLoader
 
 loader = WebBaseLoader(
     web_paths=(
-        "https://blackdzs.github.io/posts/%E4%BB%8E%E9%9B%B6%E6%9E%84%E5%BB%BArag%E5%BA%94%E7%94%A8/",
+    "https://blackdzs.github.io/posts/%E4%BB%8E%E9%9B%B6%E6%9E%84%E5%BB%BArag%E5%BA%94%E7%94%A8/",
     ),
     bs_kwargs=dict(
         parse_only=bs4.SoupStrainer(
@@ -71,6 +76,7 @@ loader = WebBaseLoader(
 documents = loader.load()
 print(documents[0].page_content[:21])
 ```
+
 ```shell
 Home » Posts【RAG应用开发】
 ```
@@ -115,6 +121,7 @@ retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k
 retrieved_docs = retriever.invoke("什么是RAG")
 print(len(retrieved_docs))
 ```
+
 ```shell
 3
 ```
@@ -129,6 +136,7 @@ prompt = hub.pull("rlm/rag-prompt")
 llm = ChatOpenAI(model="gpt-4o-mini")
 print(prompt)
 ```
+
 ```shell
 input_variables=['context', 'question'] input_types={} partial_variables={} metadata={'lc_hub_owner': 'rlm', 'lc_hub_repo': 'rag-prompt', 'lc_hub_commit_hash': '50442af133e61576e74536c6556cefe1fac147cad032f4377b60c436e6cdcb6e'} messages=[HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=['context', 'question'], input_types={}, partial_variables={}, template="You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise.\nQuestion: {question} \nContext: {context} \nAnswer:"), additional_kwargs={})]
 ```

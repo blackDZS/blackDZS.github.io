@@ -1,0 +1,196 @@
+{
+  "main": {
+    "id": "96405f05a174e588",
+    "type": "split",
+    "children": [
+      {
+        "id": "91a66aa9b7eaeaa2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "958a9a56cfdb10fe",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "新标签页"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "9a799b4e924caa1b",
+    "type": "split",
+    "children": [
+      {
+        "id": "b722e441aa49c691",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "991ed95ef11653a8",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "624d5b25cade9018",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "b457374dc1f055c8",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "8509fa306d08fb34",
+    "type": "split",
+    "children": [
+      {
+        "id": "ad72c793a5b154ee",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2fd2fd4c2f886205",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "反向链接"
+            }
+          },
+          {
+            "id": "1be7b4c3718a2c9b",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "出链"
+            }
+          },
+          {
+            "id": "99bd6cb11e927bc1",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "d1237ec63fd06f58",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {},
+              "icon": "lucide-list",
+              "title": "大纲"
+            }
+          },
+          {
+            "id": "bc34b2a1501a151a",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
+          }
+        ],
+        "currentTab": 4
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "obsidian-git:Open Git source control": false
+    }
+  },
+  "active": "991ed95ef11653a8",
+  "lastOpenFiles": [
+    "content/post/RAG应用开发指南（二）：如何评估与优化RAG应用性能/RAG应用开发指南（二）：如何评估与优化RAG应用性能.md",
+    "content/post/RAG应用开发指南（一）：深入解析RAG原理与实现/RAG应用开发指南（一）：深入解析RAG原理与实现.md",
+    "public/index.xml",
+    "public/categories/rag应用开发/index.xml",
+    "public/tags/langchain/index.xml",
+    "public/tags/rag应用开发/index.xml",
+    "public/post/index.xml",
+    "public/tags/框架/index.xml",
+    "public/tags/rag/index.xml",
+    "public/categories/index.xml",
+    "public/page/index.xml",
+    "public/categories/indexing/index.xml",
+    "public/images/head-icon.png",
+    "public/images/Retrieval-Augmented Generation for Knowledge-intensive NLP Tasks-Table1.png",
+    "public/images/RAG知识库构建过程.png",
+    "public/images/RAG 检索过程.png",
+    "public/images/RAG Metrics.png",
+    "public/post/RAG应用开发指南（一）：深入解析RAG原理与实现/favicon.png",
+    "public/images/Context Recall.png",
+    "public/images/Context Recall Caculate.png",
+    "public/images/Context Precision.png",
+    "public/images/Context Precision Caculate.png",
+    "posts/rag应用开发指南二如何评估与优化rag应用性能.md",
+    "content/_index.md",
+    "README.md"
+  ]
+}
