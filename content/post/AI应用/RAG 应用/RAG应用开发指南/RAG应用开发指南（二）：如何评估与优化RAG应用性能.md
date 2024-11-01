@@ -1,6 +1,6 @@
 ---
 title: RAG应用开发指南（二）：如何评估与优化RAG应用性能
-description: 
+description: RAG 应用性能，准确率量化评估
 date: 2024-09-29T17:17:35+08:00
 image: 
 categories: ["RAG应用开发"]
