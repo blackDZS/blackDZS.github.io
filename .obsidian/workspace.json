@@ -11,10 +11,14 @@
             "id": "958a9a56cfdb10fe",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "content/_index.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "新标签页"
+              "title": "_index"
             }
           }
         ]
@@ -167,18 +171,20 @@
   },
   "active": "991ed95ef11653a8",
   "lastOpenFiles": [
-    "content/post/RAG应用开发指南（二）：如何评估与优化RAG应用性能/RAG应用开发指南（二）：如何评估与优化RAG应用性能.md",
-    "content/post/RAG应用开发指南（一）：深入解析RAG原理与实现/RAG应用开发指南（一）：深入解析RAG原理与实现.md",
+    "public/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js",
+    "content/post/AI应用/AI 开发框架",
+    "content/post/AI应用/RAG 应用/RAG应用开发指南",
+    "content/post/AI应用/RAG 应用",
+    "content/post/AI应用",
+    "content/post/模型",
+    "README.md",
+    "content/post/AI应用/RAG 应用/RAG应用开发指南/RAG应用开发指南（二）：如何评估与优化RAG应用性能.md",
+    "content/post/AI应用/RAG 应用/RAG应用开发指南/RAG应用开发指南（一）：深入解析RAG原理与实现.md",
     "public/index.xml",
     "public/categories/rag应用开发/index.xml",
     "public/tags/langchain/index.xml",
     "public/tags/rag应用开发/index.xml",
     "public/post/index.xml",
-    "public/tags/框架/index.xml",
-    "public/tags/rag/index.xml",
-    "public/categories/index.xml",
-    "public/page/index.xml",
-    "public/categories/indexing/index.xml",
     "public/images/head-icon.png",
     "public/images/Retrieval-Augmented Generation for Knowledge-intensive NLP Tasks-Table1.png",
     "public/images/RAG知识库构建过程.png",
@@ -190,7 +196,6 @@
     "public/images/Context Precision.png",
     "public/images/Context Precision Caculate.png",
     "posts/rag应用开发指南二如何评估与优化rag应用性能.md",
-    "content/_index.md",
-    "README.md"
+    "content/_index.md"
   ]
 }
