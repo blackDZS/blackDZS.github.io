@@ -4,6 +4,8 @@ description:
 date: 2024-11-01T16:05:43+08:00
 image: 
 math: 
+categories: ["多模态大模型", "视觉语言模型"]
+tags: ["VLM", "Finetuning"]
 license: 
 hidden: false
 comments: true
