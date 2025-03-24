@@ -1,7 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>Categories - Category - DIZS&#39; Blog</title>
-        <link>https://blackdzs.github.io/categories/</link>
+        <link>http://localhost:1313/categories/</link>
         <description>Categories - Category - DIZS&#39; Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-cn</language><atom:link href="https://blackdzs.github.io/categories/" rel="self" type="application/rss+xml" /></channel>
+        <generator>Hugo -- gohugo.io</generator><language>zh-cn</language><managingEditor>1980694905@qq.com (JARVIS)</managingEditor>
+            <webMaster>1980694905@qq.com (JARVIS)</webMaster><atom:link href="http://localhost:1313/categories/" rel="self" type="application/rss+xml" /></channel>
 </rss>

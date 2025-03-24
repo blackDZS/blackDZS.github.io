@@ -1,14 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>All Posts - DIZS&#39; Blog</title>
-        <link>https://blackdzs.github.io/posts/</link>
+        <link>http://localhost:1313/posts/</link>
         <description>All Posts | DIZS&#39; Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 24 Mar 2025 17:49:14 &#43;0800</lastBuildDate><atom:link href="https://blackdzs.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-cn</language><managingEditor>1980694905@qq.com (JARVIS)</managingEditor>
+            <webMaster>1980694905@qq.com (JARVIS)</webMaster><lastBuildDate>Mon, 24 Mar 2025 17:49:14 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/posts/" rel="self" type="application/rss+xml" /><item>
     <title>First_post</title>
-    <link>https://blackdzs.github.io/posts/first_post/</link>
+    <link>http://localhost:1313/posts/first_post/</link>
     <pubDate>Mon, 24 Mar 2025 17:49:14 &#43;0800</pubDate>
-    <author>xxxx</author>
-    <guid>https://blackdzs.github.io/posts/first_post/</guid>
+    <author>JARVIS</author>
+    <guid>http://localhost:1313/posts/first_post/</guid>
     <description><![CDATA[<p>hello</p>]]></description>
 </item>
 </channel>
