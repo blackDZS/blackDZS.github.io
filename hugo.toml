@@ -51,14 +51,14 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
     name = "分类"
     url = "/categories/"
     title = ""
-  [[menu.main]]
-    weight = 4
-    identifier = "analysis"
-    pre = ""
-    post = ""
-    name = "分析"
-    url = "/analysis/"
-    title = ""
+  # [[menu.main]]
+  #   weight = 4
+  #   identifier = "analysis"
+  #   pre = ""
+  #   post = ""
+  #   name = "分析"
+  #   url = "https://cloud.umami.is/share/7psXQHnpAVU6T6tB/blackdzs.github.io"
+  #   title = ""
 
 # Markup related configuration in Hugo
 [markup]
